@@ -16,12 +16,17 @@ MARK = ('<svg class="brand-mark" viewBox="0 0 30 30" aria-hidden="true">'
 
 CARET = '<svg class="caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
 
-SOLUTION_PAGES = {'platform', 'solutions', 'woundeye', 'woundeye-health-plans', 'pressure-ulcer-study', 'wound-liability'}
+SOLUTION_PAGES = {'evidence', 'platform', 'solutions', 'woundeye', 'woundeye-health-plans', 'pressure-ulcer-study', 'wound-liability'}
+
+EXT = ' target="_blank" rel="noopener"'
+EVIDENCE_PAGES = {'evidence', 'pressure-ulcer-study', 'wound-liability'}
 
 def header(active):
     def cur(p):
         return ' aria-current="page"' if p == active else ''
-    drop_cur = ' current' if active in SOLUTION_PAGES else ''
+    drop_cur = ' current' if active in SOLUTION_PAGES - EVIDENCE_PAGES - {'compare'} else ''
+    ev_cur = ' current' if active in EVIDENCE_PAGES else ''
+    cmp_cur = ' current' if active == 'compare' else ''
     return f'''<a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap">
@@ -32,21 +37,51 @@ def header(active):
       <a href="about.html"{cur('about')}>Who we are</a>
       <div class="nav-drop{drop_cur}">
         <button type="button" aria-expanded="false" aria-haspopup="true">Solutions {CARET}</button>
-        <div class="drop-panel">
+        <div class="drop-panel drop-single">
           <div class="drop-col">
             <p class="drop-head">The platform</p>
             <a href="solutions.html"{cur('solutions')}><strong>All solutions</strong><span>Wound intelligence across the continuum of care</span></a>
             <a href="platform.html"{cur('platform')}><strong>How it fits together</strong><span>WoundRounds, workflow agents and clinical review</span></a>
             <a href="solutions.html#woundrounds"><strong>WoundRounds</strong><span>Clinical workflow and documentation for facilities</span></a>
-            <a class="sub" href="https://www.woundrounds.com" target="_blank" rel="noopener"><strong>Visit woundrounds.com</strong><span>The WoundRounds website, opens in a new tab</span></a>
+            <a class="sub" href="https://www.woundrounds.com"{EXT}><strong>Visit woundrounds.com</strong><span>The WoundRounds website, opens in a new tab</span></a>
             <a href="woundeye.html"{cur('woundeye')}><strong>WoundEye</strong><span>Wound capture and care coordination at home</span></a>
             <a class="sub" href="woundeye-health-plans.html"{cur('woundeye-health-plans')}><strong>WoundEye for health plans</strong><span>For Medicare Advantage care management</span></a>
             <a href="solutions.html#wound-qa"><strong>Wound QA Services</strong><span>Expert review by certified wound specialists</span></a>
           </div>
+        </div>
+      </div>
+      <div class="nav-drop{ev_cur}">
+        <button type="button" aria-expanded="false" aria-haspopup="true">Evidence {CARET}</button>
+        <div class="drop-panel drop-evidence">
           <div class="drop-col">
-            <p class="drop-head">Evidence</p>
-            <a href="pressure-ulcer-study.html"{cur('pressure-ulcer-study')}><strong>Pressure ulcer study</strong><span>78.9% fewer full-thickness HAPIs in a 236-bed LTACH</span></a>
+            <p class="drop-head">Published studies and posters</p>
+            <a href="evidence.html"{cur('evidence')}><strong>All evidence</strong><span>Every study with citation, design and results</span></a>
+            <a href="pressure-ulcer-study.html"{cur('pressure-ulcer-study')}><strong>Hospital for Special Care, SAWC 2025</strong><span>78.95% fewer full-thickness HAPIs in a 236-bed LTACH</span></a>
+            <a href="https://www.hmpgloballearningnetwork.com/site/wmp/content/observational-study-assess-electronic-point-care-wound-documentation-and-reporting-system-re"{EXT}><strong>Ostomy Wound Management, 2012</strong><span>Peer-reviewed observational study, 51-bed SNF</span></a>
+            <a href="https://www.woundrounds.com/?p=1718"{EXT}><strong>Presence Heritage Village, SAWC poster</strong><span>Over 80% fewer facility-acquired pressure ulcers in 7 months</span></a>
+            <a href="https://wocn.confex.com/wocn/2014am/webprogram/Paper8660.html"{EXT}><strong>QAPI for Wound Care, WOCN 2014</strong><span>Performance improvement case study in long-term care</span></a>
+          </div>
+          <div class="drop-col">
+            <p class="drop-head">Case studies</p>
+            <a href="evidence.html#amg-greenwood"><strong>AMG Specialty Hospital, Greenwood</strong><span>LTACH nursing time study</span></a>
+            <a href="evidence.html#amg-lafayette"><strong>AMG Specialty Hospital, Lafayette</strong><span>18% payroll savings</span></a>
+            <a href="https://woundrounds.com/wp-content/uploads/2012/11/ROI-Case-Study_Increasing-Revenues-Final.pdf"{EXT}><strong>Burgess Square Healthcare Centre</strong><span>Over $18,000 less overtime nursing cost (PDF)</span></a>
+            <a href="evidence.html#acadia"><strong>Acadia St. Landry Guest Home</strong><span>Growing census through wound care</span></a>
+            <p class="drop-head" style="margin-top:1rem">Research</p>
             <a href="wound-liability.html"{cur('wound-liability')}><strong>Wounds and liability</strong><span>What public claims data says about post-acute care</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-drop{cmp_cur}">
+        <button type="button" aria-expanded="false" aria-haspopup="true">Compare {CARET}</button>
+        <div class="drop-panel drop-compare">
+          <div class="drop-col">
+            <p class="drop-head">Why Wound Solutions AI</p>
+            <a href="compare.html"{cur('compare')}><strong>Software and specialists, together</strong><span>How our approach differs, side by side</span></a>
+            <a href="compare.html#swift"><strong>Compared with Swift Medical</strong><span>Swift Skin &amp; Wound</span></a>
+            <a href="compare.html#net-health"><strong>Compared with Net Health</strong><span>WoundExpert and Tissue Analytics</span></a>
+            <a href="compare.html#pointclickcare"><strong>Compared with PointClickCare</strong><span>Skin and Wound</span></a>
+            <a href="compare.html#checklist"><strong>Questions to ask any vendor</strong><span>A buyer&rsquo;s checklist for wound programs</span></a>
           </div>
         </div>
       </div>
@@ -76,6 +111,8 @@ def footer():
           <li><a href="woundeye.html">WoundEye</a></li>
           <li><a href="woundeye-health-plans.html">WoundEye for health plans</a></li>
           <li><a href="solutions.html#wound-qa">Wound QA Services</a></li>
+          <li><a href="evidence.html">Evidence and studies</a></li>
+          <li><a href="compare.html">Compare platforms</a></li>
           <li><a href="pressure-ulcer-study.html">Pressure ulcer study</a></li>
         </ul>
       </div>
@@ -437,6 +474,273 @@ def build():
 </section>
 """ + cta('See the loop with your own data.', 'A short demonstration of WoundRounds, WoundEye and our clinical review, tailored to your facilities.') + '<script src="assets/flow.js"></script>')
 
+
+    # ---------- EVIDENCE
+    OWM = 'https://www.hmpgloballearningnetwork.com/site/wmp/content/observational-study-assess-electronic-point-care-wound-documentation-and-reporting-system-re'
+    LEARN = 'https://woundrounds.com/learn'
+    page('evidence', 'Evidence: WoundRounds studies, posters and case studies | Wound Solutions AI',
+         'Published studies, conference posters and customer case studies on WoundRounds, with citations, results and disclosures.', f"""
+<div class="wrap subnav" aria-label="Evidence"><span>Evidence:</span><a href="evidence.html" aria-current="page">All evidence</a><a href="pressure-ulcer-study.html">Pressure ulcer study</a><a href="wound-liability.html">Wounds and liability</a></div>
+<section class="title-page compact">
+  <div class="wrap">
+    <p class="kicker">Evidence</p>
+    <h1>What the studies show</h1>
+    <div class="abstract">
+      <p>WoundRounds has been studied in long-term acute care hospitals and skilled nursing facilities since 2008, in a peer-reviewed journal, at national wound care conferences and by customers measuring their own results. Every source is linked below.</p>
+    </div>
+    <ul class="ev-jump">
+      <li><a href="#studies">Published studies and posters <b>4</b></a></li>
+      <li><a href="#case-studies">Customer case studies <b>4</b></a></li>
+      <li><a href="#research">Industry research <b>1</b></a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="studies">
+  <div class="wrap">
+    <div class="section-head"><h2>Published studies and posters</h2><p class="lede">Newest first. Links open the original publication or poster.</p></div>
+    <ol class="ev-list">
+      <li class="ev-item" id="hsc-2025">
+        <div class="ev-meta"><span class="ev-tag">Conference poster</span><b>2025</b><span>Symposium on Advanced Wound Care, Fall</span></div>
+        <div class="ev-body">
+          <h3>Evaluating the Efficacy of a Hybrid Approach for Wound Management and Risk Prevention in a 236-bed Long Term Acute Hospital</h3>
+          <p class="ev-who">Michael Seabock, RN, WCC, The Hospital for Special Care; Rhett A. Gustafson, BA, WoundRounds</p>
+          <dl class="ev-facts">
+            <div><dt>Setting</dt><dd>236-bed LTACH, New Britain, Connecticut</dd></div>
+            <div><dt>Design</dt><dd>Retrospective analysis of 2017&ndash;2024 hospital-acquired pressure injury and Braden risk data</dd></div>
+            <div><dt>Findings</dt><dd>Full-thickness HAPI rate down 70.18% against the four-year baseline, and 78.95% in the most recent two years</dd></div>
+          </dl>
+          <p class="ev-links"><a href="pressure-ulcer-study.html">Read our summary</a><a href="https://www.hmpgloballearningnetwork.com/node/338329"{EXT}>Published abstract (WOUNDS supplement)</a><a href="https://www.woundrounds.com/?p=5896"{EXT}>Full poster</a></p>
+        </div>
+      </li>
+      <li class="ev-item" id="wocn-2014">
+        <div class="ev-meta"><span class="ev-tag">Conference poster</span><b>2014</b><span>WOCN Society Annual Conference</span></div>
+        <div class="ev-body">
+          <h3>QAPI for Wound Care: A Case Study on Quality Assurance Performance Improvement</h3>
+          <p class="ev-who">Anne Scheurich, BS, RN, CWOCN, WoundRounds; Michelle Stuercke, BSN, MPA, DNP, NuCare Services</p>
+          <dl class="ev-facts">
+            <div><dt>Setting</dt><dd>Long-term care facility</dd></div>
+            <div><dt>Design</dt><dd>Performance improvement case study with root cause analysis and corrective actions</dd></div>
+            <div><dt>Focus</dt><dd>Preventing facility-acquired pressure ulcers under the QAPI requirements of the Affordable Care Act</dd></div>
+          </dl>
+          <p class="ev-links"><a href="https://wocn.confex.com/wocn/2014am/webprogram/Paper8660.html"{EXT}>Poster abstract (WOCN)</a></p>
+        </div>
+      </li>
+      <li class="ev-item" id="owm-2012">
+        <div class="ev-meta"><span class="ev-tag ev-peer">Peer-reviewed</span><b>2012</b><span>Ostomy Wound Management</span></div>
+        <div class="ev-body">
+          <h3>An Observational Study to Assess an Electronic Point-of-Care Wound Documentation and Reporting System Regarding User Satisfaction and Potential for Improved Care</h3>
+          <p class="ev-who">Kurtz, Florczak, Scheurich, Croghan, Sheridan, McGill, McClain</p>
+          <dl class="ev-facts">
+            <div><dt>Setting</dt><dd>Provena Heritage Village, a 51-bed skilled nursing facility in Kankakee, Illinois</dd></div>
+            <div><dt>Design</dt><dd>Two-month prospective observational study of 38 residents with pressure ulcers; nine nurses surveyed before and after</dd></div>
+            <div><dt>Findings</dt><dd>Ease of use rose from 3.3 to 4.7 and wound management effectiveness from 3.3 to 4.4 on five-point scales</dd></div>
+          </dl>
+          <p class="ev-links"><a href="{OWM}"{EXT}>Full article</a></p>
+        </div>
+      </li>
+      <li class="ev-item" id="presence">
+        <div class="ev-meta"><span class="ev-tag">Conference poster</span><b>SAWC Fall</b><span>4th Annual Symposium on Advanced Wound Care, Fall</span></div>
+        <div class="ev-body">
+          <h3>Reducing and sustaining facility-acquired pressure ulcers: Presence Heritage Village</h3>
+          <p class="ev-who">Presence Health and WoundRounds</p>
+          <dl class="ev-facts">
+            <div><dt>Setting</dt><dd>51-bed skilled nursing facility, Presence Health</dd></div>
+            <div><dt>Design</dt><dd>Seven-month before-and-after study</dd></div>
+            <div><dt>Findings</dt><dd>Facility-acquired pressure ulcers down by over 80%, attributed to better documentation and team communication</dd></div>
+          </dl>
+          <p class="ev-links"><a href="https://www.woundrounds.com/?p=1718"{EXT}>Study announcement</a><a href="{LEARN}"{EXT}>Poster on woundrounds.com</a></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section paper" id="case-studies">
+  <div class="wrap">
+    <div class="section-head"><h2>Customer case studies</h2><p class="lede">Operators measuring what changed in their own facilities after adopting WoundRounds.</p></div>
+    <div class="cases">
+      <article class="case" id="amg-greenwood">
+        <p class="case-where">LTACH &middot; Greenwood, Mississippi</p>
+        <h3>AMG Specialty Hospital, Greenwood</h3>
+        <p>The CEO ran a nursing time study comparing wound care nursing time before and after implementing WoundRounds.</p>
+        <blockquote>&ldquo;Our wound care has improved with WoundRounds.&rdquo; <cite>Jennifer Wallace, RN, BSN, CEO</cite></blockquote>
+        <a href="{LEARN}"{EXT}>Read the case study</a>
+      </article>
+      <article class="case" id="amg-lafayette">
+        <p class="case-where">LTACH &middot; Lafayette, Louisiana</p>
+        <h3>AMG Specialty Hospital, Lafayette</h3>
+        <p>Following its sister hospital&rsquo;s time study, the facility ran a payroll analysis of its own.</p>
+        <blockquote>&ldquo;Our payroll reflects an 18% savings after implementing WoundRounds.&rdquo; <cite>Mary Bollich, BSN, Chief Nursing Officer</cite></blockquote>
+        <a href="{LEARN}"{EXT}>Read the case study</a>
+      </article>
+      <article class="case" id="burgess">
+        <p class="case-where">Skilled nursing &middot; Westmont, Illinois</p>
+        <h3>Burgess Square Healthcare Centre</h3>
+        <p>A US News Best Nursing Home grew census while cutting more than $18,000 in annual overtime wound nursing costs.</p>
+        <blockquote>&ldquo;Our ROI on annual overtime nursing expenses alone outweighs the cost of our wound management solution.&rdquo; <cite>John Vrba, CEO</cite></blockquote>
+        <a href="https://woundrounds.com/wp-content/uploads/2012/11/ROI-Case-Study_Increasing-Revenues-Final.pdf"{EXT}>Read the case study (PDF)</a>
+      </article>
+      <article class="case" id="acadia">
+        <p class="case-where">Skilled nursing &middot; Church Point, Louisiana</p>
+        <h3>Acadia St. Landry Guest Home</h3>
+        <p>A four-star facility set out to grow patient census by improving the efficiency and reputation of its wound care.</p>
+        <blockquote>&ldquo;WoundRounds is providing great clinical and economic outcomes to our facility.&rdquo; <cite>Brian Hensgens, Administrator</cite></blockquote>
+        <a href="{LEARN}"{EXT}>Read the case study</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="research">
+  <div class="wrap">
+    <div class="section-head"><h2>Industry research</h2><p class="lede">Why wound documentation matters beyond the bedside.</p></div>
+    <ul class="ruled mt-2">
+      <li><h3><a href="wound-liability.html">Wounds and liability in post-acute care</a></h3><p>What public claims data, carrier studies and verdicts say about pressure injuries, litigation and insurance in skilled nursing, LTACH and sub-acute care.</p></li>
+    </ul>
+    <p class="small mt-3" style="max-width:52rem">About this evidence: these studies and case studies were produced by or with Wound Solutions AI (formerly Telemedicine Solutions, LLC) and its clinical partners. They are observational and single-site; author affiliations and funding are disclosed in each original publication.</p>
+  </div>
+</section>
+""" + cta('Talk to the team behind the results.', 'A short demonstration with our clinical team, tailored to your facilities.'))
+
+
+    # ---------- COMPARE
+    S = {
+      'swift_pcc': 'https://pointclickcare.com/products/skin-wound/',
+      'corstrata': 'https://www.businesswire.com/news/home/20230627656194/en/Swift-Medical-Announces-Partnership-with-Corstrata-to-Enhance-Virtual-Wound-Care-Delivery',
+      'swift_sw2': 'https://www.canhealth.com/2024/10/23/swift-medical-offers-new-platform-for-wound-care/',
+      'nh_sol': 'https://www.nethealth.com/wound-care-software-solutions/',
+      'nh_we': 'https://www.nethealth.com/wound-expert-ehr/',
+      'nh_call': 'https://go.nethealth.com/woundcall',
+      'pcc_app': 'https://apps.apple.com/us/app/-/id1073855679',
+      'mc': 'https://www.matrixcare.com/partner-marketplace/woundrounds/',
+      'cantata': 'https://cantatahealth.com/?p=713',
+    }
+    def fn(n): return f'<sup class="fn"><a href="#src-{n}">{n}</a></sup>'
+    page('compare', 'Compare wound care platforms: Wound Solutions AI, Swift Medical, Net Health, PointClickCare',
+         'How Wound Solutions AI compares with Swift Medical, Net Health and PointClickCare Skin and Wound: software plus certified wound specialists, in one program.', f"""
+<section class="title-page compact">
+  <div class="wrap">
+    <p class="kicker">Compare</p>
+    <h1>Most wound platforms give nurses a tool. We give them a tool and a team.</h1>
+    <div class="abstract">
+      <p>Every serious wound platform now captures photos, measures wounds and tracks healing. The difference is what happens next. With Wound Solutions AI, certified wound specialists review the documentation as part of the same program, from the same company, in the same record.</p>
+    </div>
+    <ul class="ev-jump">
+      <li><a href="#side-by-side">Side by side</a></li>
+      <li><a href="#swift">Swift Medical</a></li>
+      <li><a href="#net-health">Net Health</a></li>
+      <li><a href="#pointclickcare">PointClickCare</a></li>
+      <li><a href="#checklist">Buyer&rsquo;s checklist</a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="what-sets-us-apart">
+  <div class="wrap">
+    <div class="section-head"><h2>What sets Wound Solutions AI apart</h2><p class="lede">Four things a buyer gets in one contract.</p></div>
+    <dl class="pillars pillars-4">
+      <div><dt>Specialists, not just software</dt><dd>Our Clinical Wound Assessment team of certified wound specialists reviews assessments and catches staging errors and gaps before they reach a survey or a claim.</dd></div>
+      <div><dt>Bedside to home</dt><dd>WoundRounds serves skilled nursing, LTACH, rehabilitation and critical access hospitals. WoundEye lets patients and family carers send a photo from their own mobile device to the specialist worklist.</dd></div>
+      <div><dt>Clinicians decide</dt><dd>Workflow agents handle intake, worklists, reminders and scheduling. Every clinical determination is made by a certified wound specialist, and the record shows who and when.</dd></div>
+      <div><dt>Works with your EHR</dt><dd>WoundRounds integrates with long-term care EHRs including MatrixCare{fn(8)} and Cantata NetSolutions{fn(9)}, and WoundEye exports FHIR R4, JSON, CSV and PDF.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section paper" id="side-by-side">
+  <div class="wrap">
+    <div class="section-head"><h2>Side by side</h2><p class="lede">Based on each vendor&rsquo;s own public materials. Select a source number to see where each statement comes from.</p></div>
+    <div class="table-scroll">
+    <table class="data cmp">
+      <thead><tr><th scope="col"></th><th scope="col" class="us">Wound Solutions AI</th><th scope="col">Swift Medical</th><th scope="col">Net Health</th><th scope="col">PointClickCare Skin and Wound</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Wound photo, measurement and healing trend</th><td class="us"><b>Yes</b> &middot; WoundRounds and WoundEye</td><td>Yes{fn(3)}</td><td>Yes, Tissue Analytics{fn(4)}</td><td>Yes, powered by Swift Medical{fn(1)}</td></tr>
+        <tr><th scope="row">Certified wound specialist review from the same company</th><td class="us"><b>Yes, built in</b> &middot; Clinical Wound Assessments and Wound QA Services</td><td>Through a partnership with Corstrata, a separate company{fn(2)}</td><td>Not described; the product page covers software, analytics and patient engagement{fn(4)}</td><td>Not described on the product page{fn(1)}</td></tr>
+        <tr><th scope="row">Primary focus</th><td class="us"><b>Facility wound programs and prevention</b>, plus home capture for patients, carers and health plans</td><td>Wound imaging across home health, ambulatory, acute and skilled nursing{fn(3)}</td><td>Wound care EHR for outpatient centers and multi-facility organizations{fn(6)}</td><td>Wound documentation inside the PointClickCare EHR{fn(7)}</td></tr>
+        <tr><th scope="row">Use with the EHR you already have</th><td class="us"><b>Yes</b> &middot; MatrixCare and Cantata integrations{fn(8)}{fn(9)}; FHIR R4 export</td><td>Yes, through EHR partners such as Homecare Homebase{fn(3)}</td><td>Yes, including PointClickCare{fn(5)}</td><td>Intended for PointClickCare EHR customers{fn(7)}</td></tr>
+        <tr><th scope="row">Published LTACH outcome</th><td class="us"><b>78.95% fewer</b> full-thickness hospital-acquired pressure injuries, 236-bed LTACH, SAWC 2025</td><td colspan="3" class="muted">Each vendor publishes its own studies; see their websites.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="swift">
+  <div class="wrap article">
+    <h2>Compared with Swift Medical</h2>
+    <aside class="note"><b>About Swift.</b> A Toronto-based digital wound care company whose Skin &amp; Wound platform has been used for over 50 million assessments.{fn(3)}</aside>
+    <p>Swift is a strong imaging and measurement platform, and its technology also powers PointClickCare&rsquo;s Skin and Wound app.{fn(1)} For access to certified wound nurses, Swift customers work with Corstrata, a separate company, through a partnership announced in 2023.{fn(2)}</p>
+    <h3>Where Wound Solutions AI is different</h3>
+    <ul>
+      <li><b>One program, one accountable partner.</b> Our certified wound specialists are part of Wound Solutions AI, working in the same record as the software.</li>
+      <li><b>Built around facility risk.</b> WoundRounds has supported LTACH and skilled nursing wound programs for two decades, with Braden risk, facility-acquired tracking and survey-ready reporting at its core.</li>
+      <li><b>Families can start the record.</b> WoundEye lets a patient or carer photograph a wound on their own mobile device and send it straight to a specialist&rsquo;s worklist.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section paper" id="net-health">
+  <div class="wrap article">
+    <h2>Compared with Net Health</h2>
+    <aside class="note"><b>About Net Health.</b> Offers WoundExpert, a wound care EHR, and Tissue Analytics, an AI wound measurement tool.{fn(4)}</aside>
+    <p>Net Health&rsquo;s WoundExpert is a specialty EHR for wound care management, configurable for single outpatient wound centers or multi-facility organizations.{fn(6)} Its wound software page describes software, analytics and patient engagement tools; it does not describe clinical review services.{fn(4)}</p>
+    <h3>Where Wound Solutions AI is different</h3>
+    <ul>
+      <li><b>Made for the facility, not the clinic.</b> WoundRounds is built for nursing teams in skilled nursing and LTACH settings, where wound-related claims and survey citations concentrate.</li>
+      <li><b>Specialist oversight included.</b> Our Clinical Wound Assessment team reviews documentation, so facilities without a full-time wound nurse still get expert eyes on every wound.</li>
+      <li><b>Prevention, not only treatment.</b> Risk dashboards and daily review aim to stop facility-acquired wounds before they start.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="pointclickcare">
+  <div class="wrap article">
+    <h2>Compared with PointClickCare Skin and Wound</h2>
+    <aside class="note"><b>About PointClickCare.</b> A long-term care EHR vendor. Its Skin and Wound app uses photo recognition and auto-measurement powered by Swift Medical.{fn(1)}</aside>
+    <p>Skin and Wound is a capable documentation module for PointClickCare customers, with timestamped images and audit trails.{fn(1)} The app is intended to integrate with the PointClickCare EHR; PointClickCare suggests that non-clients look at Swift instead.{fn(7)}</p>
+    <h3>Where Wound Solutions AI is different</h3>
+    <ul>
+      <li><b>EHR-independent.</b> WoundRounds works alongside the EHR you already use, so a multi-facility operator can standardize wound care even across different systems.</li>
+      <li><b>Expert review, not only documentation.</b> Certified wound specialists check the assessments that the bedside team records.</li>
+      <li><b>Beyond the building.</b> WoundEye extends the same record to patients at home and to health plan care managers.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section paper" id="checklist">
+  <div class="wrap">
+    <div class="section-head"><h2>Questions to ask any wound care vendor</h2><p class="lede">Use these in your next evaluation, including ours.</p></div>
+    <ol class="steps">
+      <li><div><h3>Who reviews the documentation?</h3><p>Is a certified wound specialist checking assessments, and are they employed by the vendor or a separate company?</p></div></li>
+      <li><div><h3>Who makes the clinical decision?</h3><p>Does the record show which clinician confirmed the wound type and stage, and when?</p></div></li>
+      <li><div><h3>Does it work with our EHR, and every EHR across our facilities?</h3><p>Ask for named, live integrations, not plans.</p></div></li>
+      <li><div><h3>Does it help prevent wounds, or only document them?</h3><p>Look for risk dashboards, facility-acquired tracking and follow-up alerts.</p></div></li>
+      <li><div><h3>What happens after discharge?</h3><p>Can patients and families send a wound photo from home, and who sees it?</p></div></li>
+      <li><div><h3>What results have been published, and where?</h3><p>Ask for the setting, the time period and who conducted the study.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" style="border-bottom:0">
+  <div class="wrap">
+    <h2 style="font-size:1.4rem">Sources</h2>
+    <ol class="references mt-1">
+      <li id="src-1"><a href="{S['swift_pcc']}"{EXT}>PointClickCare, Skin and Wound product page</a></li>
+      <li id="src-2"><a href="{S['corstrata']}"{EXT}>Business Wire, Swift Medical announces partnership with Corstrata, 2023</a></li>
+      <li id="src-3"><a href="{S['swift_sw2']}"{EXT}>Canadian Healthcare Technology, Swift Medical offers new platform for wound care, October 2024</a></li>
+      <li id="src-4"><a href="{S['nh_sol']}"{EXT}>Net Health, wound care software solutions</a></li>
+      <li id="src-5"><a href="https://hmpgloballearningnetwork.com/site/twc/news/news-november-2022"{EXT}>Today&rsquo;s Wound Clinic, Net Health integration with PointClickCare, November 2022</a></li>
+      <li id="src-6"><a href="{S['nh_call']}"{EXT}>Net Health Wound Care + Tissue Analytics</a></li>
+      <li id="src-7"><a href="{S['pcc_app']}"{EXT}>PointClickCare Skin and Wound, App Store listing</a></li>
+      <li id="src-8"><a href="{S['mc']}"{EXT}>MatrixCare Partner Marketplace, WoundRounds listing</a></li>
+      <li id="src-9"><a href="{S['cantata']}"{EXT}>Cantata Health, data-informed wound care with WoundRounds</a></li>
+    </ol>
+    <p class="small mt-2" style="max-width:56rem">Comparison based on each company&rsquo;s publicly available materials as of November 2026. Features change; confirm current capabilities with each vendor. Swift Skin &amp; Wound, WoundExpert, Tissue Analytics, PointClickCare and Skin and Wound are trademarks of their respective owners, which do not endorse this comparison.</p>
+  </div>
+</section>
+""" + cta('See the difference with your own wounds.', 'A short demonstration of WoundRounds, WoundEye and our clinical review team.'))
+
     # ---------- ABOUT
     page('about', 'Who we are | Wound Solutions AI',
          'Wound Solutions AI is a fast-growing health technology company improving patient care with data-driven wound management.', '''
@@ -780,7 +1084,7 @@ def build():
     # ---------- PRESSURE ULCER STUDY
     page('pressure-ulcer-study', 'Pressure ulcer study: 78.9% fewer full-thickness HAPIs | Wound Solutions AI',
          'Evaluating a hybrid approach to wound management and risk prevention in a 236-bed long-term acute care hospital, 2017 to 2024.', '''
-<div class="wrap subnav" aria-label="Evidence"><span>Evidence:</span><a href="pressure-ulcer-study.html" aria-current="page">Pressure ulcer study</a><a href="wound-liability.html">Wounds and liability</a></div>
+<div class="wrap subnav" aria-label="Evidence"><span>Evidence:</span><a href="evidence.html">All evidence</a><a href="pressure-ulcer-study.html" aria-current="page">Pressure ulcer study</a><a href="wound-liability.html">Wounds and liability</a></div>
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">Poster study, The Hospital for Special Care, New Britain, Connecticut</p>
@@ -833,7 +1137,7 @@ def build():
     # ---------- WOUNDS AND LIABILITY
     page('wound-liability', 'Wounds and liability in post-acute care | Wound Solutions AI',
          'Public claims data on litigation in skilled nursing, assisted living, LTACH and sub-acute care, and why wound documentation matters.', '''
-<div class="wrap subnav" aria-label="Evidence"><span>Evidence:</span><a href="pressure-ulcer-study.html">Pressure ulcer study</a><a href="wound-liability.html" aria-current="page">Wounds and liability</a></div>
+<div class="wrap subnav" aria-label="Evidence"><span>Evidence:</span><a href="evidence.html">All evidence</a><a href="pressure-ulcer-study.html">Pressure ulcer study</a><a href="wound-liability.html" aria-current="page">Wounds and liability</a></div>
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">Research brief for operators, risk managers and brokers</p>
