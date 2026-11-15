@@ -334,7 +334,7 @@ def build():
   </div>
 </section>
 
-<section class="section">
+<section class="section slate">
   <div class="wrap">
     <div class="section-head">
       <h2>Efficient and effective</h2>
