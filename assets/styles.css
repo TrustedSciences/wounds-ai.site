@@ -459,3 +459,13 @@ table.cmp td.us sup.fn a { color: #E3A79C; }
 /* Drop-down hover bridge: invisible strip covering the gap between button and panel */
 .drop-panel::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: -1.6rem; height: 1.6rem; }
 @media (min-width: 961px) { .nav-drop.open > button { background: var(--dune); } }
+
+
+/* ---------- Slate band (#7F95AE): home "Efficient and effective" ---------- */
+.section.slate, main > section.section:has(.photo-band) { background: #7F95AE; border-bottom-color: #6A7F98; }
+.section.slate h2, .section.slate dt, .section.slate .lede, .section.slate .muted, .section.slate dd, .section.slate figcaption,
+main > section.section:has(.photo-band) h2, main > section.section:has(.photo-band) dt, main > section.section:has(.photo-band) .lede,
+main > section.section:has(.photo-band) .muted, main > section.section:has(.photo-band) dd, main > section.section:has(.photo-band) figcaption { color: #141B27; }
+.section.slate .pillars, main > section.section:has(.photo-band) .pillars { border-top-color: #141B27; }
+.section.slate .pillars > div + div, main > section.section:has(.photo-band) .pillars > div + div { border-left-color: rgba(20,27,39,.35); }
+.section.slate .photo img, main > section.section:has(.photo-band) .photo img { border-color: #141B27; }
