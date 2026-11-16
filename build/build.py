@@ -302,6 +302,41 @@ FLOW_WIDGET = """<div class="flow" id="wsa-flow">
   </div>
 </div>"""
 
+FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-variant="woundeye">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
+      <button type="button" data-stage="1">1. Capture</button>
+      <button type="button" data-stage="2">2. Worklist</button>
+      <button type="button" data-stage="3">3. Clinical review</button>
+      <button type="button" data-stage="4">4. Result</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>Photos sent from home</div>
+        <div><b data-count="read">0</b>On the specialist worklist</div>
+        <div><b data-count="confirmed">0</b>Specialist assessments</div>
+        <div class="res"><b data-count="results">0</b>Results back to home</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate">Photos per day</label><b data-rate-out>60</b></div>
+        <input id="flow-rate" type="range" min="20" max="300" step="10" value="60" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>Photo sent from home</span>
+    <span><i class="l-read"></i>Queued for the specialist by agents</span>
+    <span><i class="l-result"></i>Result returned to patient and carer</span>
+    <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>"""
+
 # ---------------------------------------------------------------- pages
 def build():
     os.makedirs(OUT, exist_ok=True)
@@ -895,15 +930,19 @@ def build():
   <div class="wrap">
     <div class="section-head">
       <h2>How a wound moves through WoundEye</h2>
-      <p class="lede">The AI never has the last word. Every record shows which clinician decided, and when.</p>
+      <p class="lede">Workflow agents handle the routing. A certified wound specialist makes every clinical decision, and the result comes back to the patient and carer in the app.</p>
     </div>
-    <figure class="figure mt-2"><div class="plate">{loop_figure()}</div></figure>
+  </div>
+  <div class="wrap flow-wide mt-2">
+    {FLOW_WE}
+  </div>
+  <div class="wrap">
     <ol class="steps">
       <li><div><h3>A guided photograph</h3><p>On any mobile device, from the camera or a photo already taken. Location data and camera details are stripped before anything is saved, and the image goes to secure storage, not the camera roll.</p></div></li>
       <li><div><h3>Two taps to say where</h3><p>First the body region, then the exact spot on a close-up with top and sole views. Every later photo of that spot is filed under the same site.</p></div></li>
       <li><div><h3>How it feels, in plain words</h3><p>A face for pain, a note in the patient&rsquo;s own words, and size compared to something familiar: a dime, a quarter, a golf ball. A ruler is welcome but never required.</p></div></li>
-      <li><div><h3>A first read from WoundAI</h3><p>Our model, trained on photographs labelled by wound-care nurses, suggests type, class and stage within seconds, with the line that it comes from a computer model and is not a diagnosis.</p></div></li>
-      <li><div><h3>A clinician confirms or corrects</h3><p>The clinician agrees or changes the result, completes a structured assessment and sets the follow-up. The clinician&rsquo;s answer is what the patient receives.</p></div></li>
+      <li><div><h3>Onto a specialist&rsquo;s worklist</h3><p>Workflow agents check that the photo is usable and filed to the right body site, then place it on a certified wound specialist&rsquo;s worklist and track it until it has been reviewed.</p></div></li>
+      <li><div><h3>A specialist assesses, and the result comes back</h3><p>The specialist determines type and stage, completes a structured assessment and sets the follow-up. The result returns through the app in plain language, to the patient and to their carer.</p></div></li>
     </ol>
   </div>
 </section>
@@ -972,7 +1011,8 @@ def build():
   </div>
 </section>
 ''' + cta() + f'''
-<div class="wrap"><p class="small" style="padding:1.5rem 0">{WOUNDEYE_LEGAL}</p></div>''')
+<div class="wrap"><p class="small" style="padding:1.5rem 0">{WOUNDEYE_LEGAL}</p></div>
+<script src="assets/flow.js"></script>''')
 
     # ---------- WOUNDEYE FOR HEALTH PLANS
     B1 = 'assets/docs/woundeye-medicare-advantage-brochure-1.pdf'

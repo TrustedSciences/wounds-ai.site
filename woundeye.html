@@ -144,41 +144,52 @@
   <div class="wrap">
     <div class="section-head">
       <h2>How a wound moves through WoundEye</h2>
-      <p class="lede">The AI never has the last word. Every record shows which clinician decided, and when.</p>
+      <p class="lede">Workflow agents handle the routing. A certified wound specialist makes every clinical decision, and the result comes back to the patient and carer in the app.</p>
     </div>
-    <figure class="figure mt-2"><div class="plate"><svg viewBox="0 0 720 210" role="img" aria-labelledby="loop-t">
-  <title id="loop-t">How a wound moves through WoundEye: a photo from home, a first read from WoundAI, a clinician's decision, and a dated record for the care team</title>
-  <g font-family="Atkinson Hyperlegible, sans-serif" fill="#1B2433">
-    <g fill="none" stroke="#1B2433" stroke-width="1.4">
-      <rect x="8" y="40" width="150" height="96" rx="2"/>
-      <rect x="192" y="40" width="150" height="96" rx="2" stroke-dasharray="4 3"/>
-      <rect x="376" y="40" width="150" height="96" rx="2" stroke-width="2.2"/>
-      <rect x="560" y="40" width="150" height="96" rx="2"/>
-      <path d="M160 88h28M184 84l4 4-4 4M344 88h28M368 84l4 4-4 4M528 88h28M552 84l4 4-4 4"/>
-      <path d="M635 138 C 635 190 83 190 83 140" stroke-dasharray="3 4"/>
-      <path d="M79 146 83 138 87 146"/>
-    </g>
-    <g font-size="13.5" font-weight="700">
-      <text x="22" y="72">Photo from home</text>
-      <text x="206" y="72">WoundAI first read</text>
-      <text x="390" y="72">Clinician decides</text>
-      <text x="574" y="72">Record, care team</text>
-    </g>
-    <g font-size="11.5" fill="#465063">
-      <text x="22" y="94">Patient or carer,</text><text x="22" y="111">own mobile device,</text><text x="22" y="128">two taps on a body map</text>
-      <text x="206" y="94">Suggests type, class</text><text x="206" y="111">and stage. Labelled</text><text x="206" y="128">"not a diagnosis"</text>
-      <text x="390" y="94">Confirms or corrects,</text><text x="390" y="111">assesses, sets follow-up.</text><text x="390" y="128">The record shows who.</text>
-      <text x="574" y="94">Photo timeline, trend,</text><text x="574" y="111">flags. PDF, FHIR R4,</text><text x="574" y="128">JSON or CSV</text>
-    </g>
-    <text x="360" y="202" text-anchor="middle" font-family="Caladea, Cambria, serif" font-style="italic" font-size="13" fill="#465063">Follow-up photos join the same body site, so everyone sees one wound over time</text>
-  </g>
-</svg></div></figure>
+  </div>
+  <div class="wrap flow-wide mt-2">
+    <div class="flow flow-we" id="wsa-flow" data-variant="woundeye">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
+      <button type="button" data-stage="1">1. Capture</button>
+      <button type="button" data-stage="2">2. Worklist</button>
+      <button type="button" data-stage="3">3. Clinical review</button>
+      <button type="button" data-stage="4">4. Result</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>Photos sent from home</div>
+        <div><b data-count="read">0</b>On the specialist worklist</div>
+        <div><b data-count="confirmed">0</b>Specialist assessments</div>
+        <div class="res"><b data-count="results">0</b>Results back to home</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate">Photos per day</label><b data-rate-out>60</b></div>
+        <input id="flow-rate" type="range" min="20" max="300" step="10" value="60" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>Photo sent from home</span>
+    <span><i class="l-read"></i>Queued for the specialist by agents</span>
+    <span><i class="l-result"></i>Result returned to patient and carer</span>
+    <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>
+  </div>
+  <div class="wrap">
     <ol class="steps">
       <li><div><h3>A guided photograph</h3><p>On any mobile device, from the camera or a photo already taken. Location data and camera details are stripped before anything is saved, and the image goes to secure storage, not the camera roll.</p></div></li>
       <li><div><h3>Two taps to say where</h3><p>First the body region, then the exact spot on a close-up with top and sole views. Every later photo of that spot is filed under the same site.</p></div></li>
       <li><div><h3>How it feels, in plain words</h3><p>A face for pain, a note in the patient&rsquo;s own words, and size compared to something familiar: a dime, a quarter, a golf ball. A ruler is welcome but never required.</p></div></li>
-      <li><div><h3>A first read from WoundAI</h3><p>Our model, trained on photographs labelled by wound-care nurses, suggests type, class and stage within seconds, with the line that it comes from a computer model and is not a diagnosis.</p></div></li>
-      <li><div><h3>A clinician confirms or corrects</h3><p>The clinician agrees or changes the result, completes a structured assessment and sets the follow-up. The clinician&rsquo;s answer is what the patient receives.</p></div></li>
+      <li><div><h3>Onto a specialist&rsquo;s worklist</h3><p>Workflow agents check that the photo is usable and filed to the right body site, then place it on a certified wound specialist&rsquo;s worklist and track it until it has been reviewed.</p></div></li>
+      <li><div><h3>A specialist assesses, and the result comes back</h3><p>The specialist determines type and stage, completes a structured assessment and sets the follow-up. The result returns through the app in plain language, to the patient and to their carer.</p></div></li>
     </ol>
   </div>
 </section>
@@ -253,6 +264,7 @@
   </div>
 </section>
 <div class="wrap"><p class="small" style="padding:1.5rem 0">WoundEye and WoundAI are products of Wound Solutions AI, LLC. WoundAI is decision support; a clinician confirms every result. WoundAI is not cleared or authorized by the FDA. WoundEye does not diagnose, treat, cure or prevent disease. Informational only.</p></div>
+<script src="assets/flow.js"></script>
 </main>
 <footer class="site-footer">
   <div class="wrap">

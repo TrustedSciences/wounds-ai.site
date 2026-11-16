@@ -66,8 +66,31 @@
       } }
   };
 
+  // WoundEye-only variant (used on the WoundEye page): home -> WoundEye -> agents -> specialist -> result back home
+  var variant = root.getAttribute('data-variant');
+  var LAYOUTS_WE = {
+    h: { W: 1200, H: 400, dir: 'h', resultLabel: [640, 352],
+      caps: [[105, 'At home'], [355, 'Capture'], [650, 'Workflow agents'], [975, 'Clinical review']],
+      pos: { home: [105, 180, 170, 48], we: [355, 180, 200, 76], ai: [650, 180, 92], cwa: [975, 180, 230, 96] } },
+    v: { W: 400, H: 640, dir: 'v', resultLabel: null,
+      pos: { home: [190, 50, 210, 46], we: [190, 160, 210, 68], ai: [190, 340, 82], cwa: [190, 540, 250, 86] } }
+  };
+  var STAGES_WE = [
+    { n: 0, title: 'The WoundEye loop',
+      body: 'A patient, family carer or home nurse photographs the wound in WoundEye. Wound Solutions AI\u2019s workflow agents check the photo in and place it on a certified wound specialist\u2019s worklist. The specialist makes the assessment, and the result goes back through the app to the patient and carer.' },
+    { n: 1, title: 'Capture',
+      body: 'One guided photo on any mobile device, two taps on a body map to mark the spot, and a few plain questions about pain and size. Location data and camera details are stripped before the photo is stored.' },
+    { n: 2, title: 'Worklist',
+      body: 'Workflow agents do the administrative work. They check that the photo is usable and filed to the right body site, add it to the specialist\u2019s worklist, track it until it has been reviewed, send reminders and schedule follow-ups. They make no clinical decisions.' },
+    { n: 3, title: 'Clinical review',
+      body: 'A certified wound specialist reviews the photograph and its location, determines wound type and stage, screens for infection and sets the follow-up. Every clinical decision is theirs, and the record shows who decided, and when.' },
+    { n: 4, title: 'Result',
+      body: 'The specialist\u2019s result comes back through WoundEye in plain language: what the wound is, what to do tonight, the signs that mean call 911, and the follow-up date. The carer sees it too, and every follow-up photo joins the same wound\u2019s timeline.' }
+  ];
+  if (variant === 'woundeye') STAGES = STAGES_WE;
+
   // ---------------------------------------------------------------- state
-  var S = { L: null, mode: 'both', perDay: 150, playing: !reduce, stage: 0, focus: null,
+  var S = { L: null, mode: variant === 'woundeye' ? 'home' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
             counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
   var svg, gEdges, gFlow, gNodes, gParts, paths = {}, nodeEls = {}, particles = [], pool = [];
   var spawnAcc = 0, last = 0;
@@ -123,7 +146,7 @@
   // ---------------------------------------------------------------- build
   function build() {
     var wide = root.clientWidth >= 760;
-    var L = LAYOUTS[wide ? 'h' : 'v'];
+    var L = (variant === 'woundeye' ? LAYOUTS_WE : LAYOUTS)[wide ? 'h' : 'v'];
     if (S.L === L && svg) return;
     S.L = L;
     stage.innerHTML = '';
@@ -140,7 +163,7 @@
 
     // column captions
     var cap = el('g', { 'class': 'flow-caps' }, svg);
-    var caps = L.dir === 'h'
+    var caps = L.caps ? L.caps : L.dir === 'h'
       ? [[95, 'Where wounds are seen'], [345, 'Capture'], [612, 'Workflow agents'], [880, 'Clinical review'], [1110, 'Act and record']]
       : [];
     caps.forEach(function (c) { var t = el('text', { x: c[0], y: L.H - 14, 'text-anchor': 'middle' }, cap); t.textContent = c[1]; });
@@ -148,27 +171,32 @@
     gEdges = el('g', {}, svg);
     gFlow = el('g', {}, svg);
     EDGES.forEach(function (e) {
+      if (!L.pos[e[0]] || !L.pos[e[1]]) return;
       var id = e[0] + '-' + e[1], d = edgePath(e[0], e[1]);
       var base = el('path', { d: d, 'class': 'edge', 'data-a': e[0], 'data-b': e[1] }, gEdges);
       var flow = el('path', { d: d, 'class': 'edge-flow', 'data-a': e[0], 'data-b': e[1] }, gFlow);
       paths[id] = { el: base, flow: flow, len: base.getTotalLength(), a: e[0], b: e[1] };
     });
-    var lp = loopPath();
-    var lb = el('path', { d: lp, 'class': 'edge loop', 'data-a': 'dash', 'data-b': 'wr' }, gEdges);
-    el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': 'dash', 'data-b': 'wr' }, gFlow);
-    paths['loop'] = { el: lb, len: lb.getTotalLength(), a: 'dash', b: 'wr' };
+    if (L.pos.dash && L.pos.wr) {
+      var lp = loopPath();
+      var lb = el('path', { d: lp, 'class': 'edge loop', 'data-a': 'dash', 'data-b': 'wr' }, gEdges);
+      el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': 'dash', 'data-b': 'wr' }, gFlow);
+      paths['loop'] = { el: lb, len: lb.getTotalLength(), a: 'dash', b: 'wr' };
+    }
     var rp = resultPath();
     var rb = el('path', { d: rp, 'class': 'edge result', 'data-a': 'cwa', 'data-b': 'home' }, gEdges);
     el('path', { d: rp, 'class': 'edge-flow result', 'data-a': 'cwa', 'data-b': 'home' }, gFlow);
     paths['result'] = { el: rb, len: rb.getTotalLength(), a: 'cwa', b: 'home' };
     if (L.resultLabel) { var rl = el('text', { 'class': 'result-label', x: L.resultLabel[0], y: L.resultLabel[1], 'text-anchor': 'middle' }, svg); rl.textContent = 'Result: the specialist\u2019s assessment goes back through WoundEye to the patient and carer'; }
+    if (L.loopLabel) {
     var ll = el('text', { 'class': 'loop-label', x: L.loopLabel[0], y: L.loopLabel[1], 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
     ll.textContent = L.dir === 'h' ? 'Follow-up: the next assessment joins the same wound’s timeline' : 'Follow-up joins the same timeline';
+    }
 
     gParts = el('g', {}, svg);
     gNodes = el('g', {}, svg);
-    Object.keys(NODES).forEach(function (id) { drawNode(id); });
+    Object.keys(NODES).forEach(function (id) { if (L.pos[id]) drawNode(id); });
 
     applyFocus();
   }
@@ -233,6 +261,7 @@
       var n = NODES[id];
       var hidden = offMode(id);
       var on = f ? (id === f) : (st === 0 || n.stage === st);
+      if (variant === 'woundeye' && !f && st === 4) on = (id === 'home' || id === 'we');
       nodeEls[id].classList.toggle('dim', !on || hidden);
       nodeEls[id].classList.toggle('hidden-mode', hidden);
       nodeEls[id].classList.toggle('focus', id === f);
@@ -240,6 +269,7 @@
     svg.querySelectorAll('.edge, .edge-flow').forEach(function (p) {
       var a = p.getAttribute('data-a'), b = p.getAttribute('data-b');
       var on = f ? (a === f || b === f) : (st === 0 || NODES[a].stage === st || NODES[b].stage === st);
+      if (variant === 'woundeye' && !f && st) on = st === 4 ? p.classList.contains('result') : (!p.classList.contains('result') && on);
       var hidden = offMode(a) || offMode(b);
       p.classList.toggle('dim', !on || hidden);
       p.classList.toggle('off', hidden);
@@ -263,6 +293,7 @@
     var flag = Math.random() < 0.12;
     if (flag) { route.push('cwa-dash'); if (!home) route.push('loop'); }
     else route.push(pick(['cwa-dash', 'cwa-rec', 'cwa-rec', 'cwa-ehr', 'cwa-trend']));
+    route = route.filter(function (id) { return paths[id]; });
     var c = pool.pop() || el('circle', { r: S.L.dir === 'h' ? 5 : 5.5 }, gParts);
     c.style.display = '';
     setState(c, 'raw');

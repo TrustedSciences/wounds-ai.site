@@ -520,3 +520,4 @@ main > section.section:has(.photo-band) .muted, main > section.section:has(.phot
 .flow-intro .flow { scroll-margin-top: calc(4.5rem + 1rem); }
 /* Home: every section after the flow also snaps under the menu */
 main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px); }
+.flow-we .flow-counts { grid-template-columns: repeat(2, minmax(0,1fr)); }
