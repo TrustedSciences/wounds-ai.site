@@ -499,3 +499,11 @@ main > section.section:has(.photo-band) .muted, main > section.section:has(.phot
 .reasons h3 { font-size: 1.35rem; font-weight: 400; margin-bottom: .5rem; }
 .reasons p { color: var(--ink-2); margin: 0; }
 @media (max-width: 760px) { .reasons { grid-template-columns: 1fr; } .reasons > div:nth-child(2n) { padding-left: 0; border-left: 0; } }
+
+/* Flow: result returned to patient and carer */
+.flow .edge.result { stroke: #3F6B66; stroke-width: 1.5; }
+.flow .edge-flow.result { stroke: #7FC4B8; opacity: .85; stroke-dasharray: 4 8; animation-direction: normal; }
+.flow .pt-result { fill: #7FC4B8; stroke: #1B2433; stroke-width: 1.2; }
+.flow .result-label { font: italic 13px var(--serif); fill: #9FCFC6; }
+.flow-legend .l-result { background: #7FC4B8; }
+.flow-counts .res b { color: #9FCFC6; }

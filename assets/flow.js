@@ -29,15 +29,15 @@
 
   var STAGES = [
     { n: 0, title: 'The whole loop',
-      body: 'Nurses document at the bedside in WoundRounds, and those assessments go straight to our Clinical Wound Assessment team. At home, WoundEye captures a photo, and Wound Solutions AI\u2019s workflow agents place it on the specialist\u2019s worklist. Certified wound specialists make every clinical decision. The result reaches the care team, the record and the systems that need it, and the next follow-up joins the same wound\u2019s timeline.' },
+      body: 'Nurses document at the bedside in WoundRounds, and those assessments go straight to our Clinical Wound Assessment team. At home, WoundEye captures a photo, and Wound Solutions AI\u2019s workflow agents place it on the specialist\u2019s worklist. Certified wound specialists make every clinical decision. For WoundEye, the specialist\u2019s result goes back through the app to the patient, family carer or home nurse. The result also reaches the care team, the record and the systems that need it, and the next follow-up joins the same wound\u2019s timeline.' },
     { n: 1, title: 'Capture',
       body: 'Nurses document at the bedside in WoundRounds: photo, location, measurements and Braden risk, in the facility\u2019s own workflow. At home, a patient or family carer uses WoundEye: one photo on their own mobile device and two taps on a body map.' },
     { n: 2, title: 'Worklist',
       body: 'For WoundEye submissions, Wound Solutions AI runs workflow agents that do the administrative work. They check that the photo is usable and filed to the right body site, add it to the certified wound specialist\u2019s worklist, track it until it has been reviewed, send reminders and schedule follow-ups. Agents simplify, manage and scale the workflow. They make no clinical decisions.' },
     { n: 3, title: 'Clinical Wound Assessment',
-      body: 'Certified wound specialists review WoundRounds assessments and WoundEye submissions. They determine wound type and stage, check measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. Every clinical decision is theirs, and the record shows who decided, and when.' },
+      body: 'Certified wound specialists review WoundRounds assessments and WoundEye submissions. They determine wound type and stage, check measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. Every clinical decision is theirs, and the record shows who decided, and when. For WoundEye submissions, the result goes straight back to the patient and carer in the app.' },
     { n: 4, title: 'Act and record',
-      body: 'The specialist\u2019s assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review. It exports to the EHR or health plan as FHIR R4, PDF or CSV, and it adds a point to the wound\u2019s healing trend. The next follow-up starts the loop again.' }
+      body: 'For patients at home, the specialist\u2019s result comes back through WoundEye in plain language: what the wound is, what to do tonight, the signs that mean call 911, and the follow-up date. The same assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review. It exports to the EHR or health plan as FHIR R4, PDF or CSV, and it adds a point to the wound\u2019s healing trend. The next follow-up starts the loop again.' }
   ];
 
   var EDGES = [
@@ -48,7 +48,7 @@
 
   // ---------------------------------------------------------------- layouts
   var LAYOUTS = {
-    h: { W: 1200, H: 668, dir: 'h', loopLabel: [600, 34],
+    h: { W: 1200, H: 724, dir: 'h', loopLabel: [600, 34], resultLabel: [612, 688],
       pos: {
         snf: [95, 130, 150, 44], ltach: [95, 200, 150, 44], rehab: [95, 270, 150, 44], cah: [95, 340, 150, 44], home: [95, 530, 150, 44],
         wr: [345, 235, 190, 76], we: [345, 530, 190, 68],
@@ -56,7 +56,7 @@
         cwa: [880, 370, 214, 92],
         dash: [1110, 150, 168, 58], rec: [1110, 300, 168, 58], ehr: [1110, 450, 168, 58], trend: [1110, 590, 168, 58]
       } },
-    v: { W: 400, H: 980, dir: 'v', loopLabel: [20, 720],
+    v: { W: 400, H: 980, dir: 'v', loopLabel: [20, 720], resultLabel: null,
       pos: {
         snf: [110, 46, 170, 40], ltach: [292, 46, 170, 40], rehab: [110, 100, 170, 40], cah: [292, 100, 170, 40], home: [292, 170, 170, 40],
         wr: [110, 270, 178, 66], we: [292, 270, 160, 66],
@@ -68,7 +68,7 @@
 
   // ---------------------------------------------------------------- state
   var S = { L: null, mode: 'both', perDay: 150, playing: !reduce, stage: 0, focus: null,
-            counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0 }, simSeconds: 0 };
+            counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
   var svg, gEdges, gFlow, gNodes, gParts, paths = {}, nodeEls = {}, particles = [], pool = [];
   var spawnAcc = 0, last = 0;
 
@@ -95,6 +95,19 @@
     var s = anchor(a, h ? 'r' : 'b'), e = anchor(b, h ? 'l' : 't');
     if (h) { var dx = (e[0] - s[0]) * 0.5; return 'M' + s + ' C' + (s[0] + dx) + ',' + s[1] + ' ' + (e[0] - dx) + ',' + e[1] + ' ' + e; }
     var dy = (e[1] - s[1]) * 0.5; return 'M' + s + ' C' + s[0] + ',' + (s[1] + dy) + ' ' + e[0] + ',' + (e[1] - dy) + ' ' + e;
+  }
+
+  function resultPath() {
+    var L = S.L;
+    if (L.dir === 'h') {
+      var s0 = anchor('cwa', 'b'), w = anchor('we', 'b'), h = anchor('home', 'b'), a = S.L.pos.ai;
+      var yLow = a[1] + a[2] + 32;
+      return 'M' + s0 + ' C' + s0[0] + ',' + (yLow - 20) + ' ' + (a[0] + 150) + ',' + yLow + ' ' + a[0] + ',' + yLow +
+             ' C' + (a[0] - 150) + ',' + yLow + ' ' + (w[0] + 60) + ',' + (w[1] + 20) + ' ' + w[0] + ',' + (w[1] + 6) +
+             ' C' + (w[0] - 70) + ',' + (w[1] + 40) + ' ' + (h[0] + 40) + ',' + (h[1] + 40) + ' ' + h[0] + ',' + h[1];
+    }
+    var c = anchor('cwa', 'r'), hm = anchor('home', 'r');
+    return 'M' + c + ' C' + (c[0] + 55) + ',' + c[1] + ' 392,' + (c[1] - 20) + ' 392,' + (c[1] - 70) + ' L392,' + (hm[1] + 50) + ' C392,' + (hm[1] + 10) + ' ' + (hm[0] + 10) + ',' + hm[1] + ' ' + hm;
   }
 
   function loopPath() {
@@ -144,6 +157,11 @@
     var lb = el('path', { d: lp, 'class': 'edge loop', 'data-a': 'dash', 'data-b': 'wr' }, gEdges);
     el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': 'dash', 'data-b': 'wr' }, gFlow);
     paths['loop'] = { el: lb, len: lb.getTotalLength(), a: 'dash', b: 'wr' };
+    var rp = resultPath();
+    var rb = el('path', { d: rp, 'class': 'edge result', 'data-a': 'cwa', 'data-b': 'home' }, gEdges);
+    el('path', { d: rp, 'class': 'edge-flow result', 'data-a': 'cwa', 'data-b': 'home' }, gFlow);
+    paths['result'] = { el: rb, len: rb.getTotalLength(), a: 'cwa', b: 'home' };
+    if (L.resultLabel) { var rl = el('text', { 'class': 'result-label', x: L.resultLabel[0], y: L.resultLabel[1], 'text-anchor': 'middle' }, svg); rl.textContent = 'Result: the specialist\u2019s assessment goes back through WoundEye to the patient and carer'; }
     var ll = el('text', { 'class': 'loop-label', x: L.loopLabel[0], y: L.loopLabel[1], 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
     ll.textContent = L.dir === 'h' ? 'Follow-up: the next assessment joins the same wound’s timeline' : 'Follow-up joins the same timeline';
@@ -192,9 +210,9 @@
     ltach: 'The highest-acuity patients in post-acute care, and the highest rate of new pressure injuries.',
     rehab: 'Accurate admission assessments, so wounds present on arrival are recorded as such.',
     cah: 'Specialist-level wound oversight where wound specialists are scarce.',
-    home: 'Most chronic wounds are first noticed at home, by family. WoundEye gives them a way in.',
+    home: 'Patients at home, family carers and home nurses. They send the photo through WoundEye, and the specialist\u2019s result comes back to them in the app, in plain language, with guidance and the follow-up date.',
     wr: 'WoundRounds is the bedside tool: easy documentation, tracking and trending, and dashboards of each patient\u2019s risk drivers. Assessments go straight to the Clinical Wound Assessment team for review.',
-    we: 'WoundEye: one photo on the mobile device the family already owns, two taps on a body map, and a few plain questions. Workflow agents pass the photo to the certified wound specialist\u2019s worklist.',
+    we: 'WoundEye: one photo on the mobile device the family already owns, two taps on a body map, and a few plain questions. Workflow agents pass the photo to the certified wound specialist\u2019s worklist, and route the specialist\u2019s result back to the patient and carer in the app.',
     ai: 'Workflow agents for WoundEye. They check each photo in, file it to the right body site, build and track the specialist\u2019s worklist, send reminders and schedule follow-ups. They make no clinical decisions. Photographs never pass through a third-party AI service.',
     cwa: 'Our certified wound specialists review WoundRounds assessments and WoundEye submissions, determine type and stage, and flag suspected infection. Every clinical decision is made by a specialist.',
     dash: 'Live counts by wound type: flagged, follow-up due and recent. A flag clears only when a later assessment clears it.',
@@ -248,8 +266,15 @@
     var c = pool.pop() || el('circle', { r: S.L.dir === 'h' ? 5 : 5.5 }, gParts);
     c.style.display = '';
     setState(c, 'raw');
-    particles.push({ el: c, route: route, i: 0, d: 0, flag: flag, speed: 150 + Math.random() * 60 });
+    particles.push({ el: c, route: route, i: 0, d: 0, flag: flag, home: home, speed: 150 + Math.random() * 60 });
     S.counts.captured++;
+  }
+
+  function spawnResult(seed) {
+    var c = pool.pop() || el('circle', { r: S.L.dir === 'h' ? 5 : 5.5 }, gParts);
+    c.style.display = '';
+    setState(c, 'result');
+    particles.push({ el: c, route: ['result'], i: 0, d: 0, isResult: true, seed: seed, speed: 170 });
   }
 
   function setState(c, s) {
@@ -261,7 +286,10 @@
     var n = nodeEls[to];
     if (n && !reduce) { n.classList.remove('ping'); void n.getBBox(); n.classList.add('ping'); }
     if (to === 'ai') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }
-    if (to === 'cwa') { setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; } }
+    if (to === 'cwa' && !p.isResult) {
+      setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; }
+      if (p.home) spawnResult(p.seed);
+    }
   }
 
   function tick(t) {
@@ -276,7 +304,7 @@
         if (p.d >= e.len) {
           arrive(p, p.route[p.i]);
           p.d -= e.len; p.i++;
-          if (p.i >= p.route.length) { if (!p.seed) S.counts.record++; p.el.style.display = 'none'; pool.push(p.el); particles.splice(k, 1); continue; }
+          if (p.i >= p.route.length) { if (!p.seed) { if (p.isResult) S.counts.results++; else S.counts.record++; } p.el.style.display = 'none'; pool.push(p.el); particles.splice(k, 1); continue; }
           e = paths[p.route[p.i]];
         }
         var pt = e.el.getPointAtLength(Math.min(p.d, e.len));
@@ -324,6 +352,6 @@
   for (var i = 0; i < 18; i++) { spawn(); var p = particles[particles.length - 1]; p.seed = true; p.i = Math.floor(Math.random() * (p.route.length)); p.d = Math.random() * paths[p.route[p.i]].len;
     var atCwa = p.route.indexOf('ai-cwa') > -1 ? 3 : 2; if (p.i >= 2 && atCwa === 3) setState(p.el, 'read'); if (p.i >= atCwa) setState(p.el, p.flag ? 'flag' : 'ok');
     var pt = paths[p.route[p.i]].el.getPointAtLength(p.d); p.el.setAttribute('cx', pt.x); p.el.setAttribute('cy', pt.y); }
-  S.counts = { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0 }; renderCounts();
+  S.counts = { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }; renderCounts();
   requestAnimationFrame(tick);
 })();
