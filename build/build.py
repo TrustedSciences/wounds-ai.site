@@ -869,7 +869,7 @@ def build():
     # ---------- WOUNDEYE
     page('woundeye', 'WoundEye | Wound capture and care coordination at home',
          'WoundEye lets a patient or carer photograph a wound on their own mobile device. WoundAI offers a first read and a clinician confirms it the same day.', f'''
-<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html" aria-current="page">How it works</a><a href="woundeye-health-plans.html">For health plans</a><a href="#privacy">Privacy</a><a href="#integrations">Integrations</a></div>
+<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html" aria-current="page">How it works</a><a href="woundeye-health-plans.html">For health plans</a><a href="#privacy">Privacy</a><a href="#integrations">Integrations</a><div class="nav-drop sub-drop"><button type="button" aria-expanded="false" aria-haspopup="true">Learn more {CARET}</button><div class="drop-panel drop-docs"><div class="drop-col"><p class="drop-head">Brochures for Medicare Advantage plans (PDF)</p><a href="assets/docs/woundeye-medicare-advantage-brochure-1.pdf" target="_blank" rel="noopener"><strong>The wound that costs the most is the one nobody saw in time</strong><span>One-page brochure &middot; PDF, 2.8 MB</span></a><a href="assets/docs/woundeye-medicare-advantage-brochure-2.pdf" target="_blank" rel="noopener"><strong>Catch the wound at home, before it becomes a claim</strong><span>One-page brochure &middot; PDF, 1.8 MB</span></a></div></div></div></div>
 <section class="title-page">
   <div class="wrap title-grid">
     <div>
@@ -973,7 +973,7 @@ def build():
     # ---------- WOUNDEYE FOR HEALTH PLANS
     page('woundeye-health-plans', 'WoundEye for Medicare Advantage plans | Wound Solutions AI',
          'The wound that costs the most is the one nobody saw in time. WoundEye moves the first wound assessment into the home, with a clinician-signed record.', '''
-<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html">How it works</a><a href="woundeye-health-plans.html" aria-current="page">For health plans</a><a href="#member-story">Member story</a><a href="#pilot">Pilot</a></div>
+<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html">How it works</a><a href="woundeye-health-plans.html" aria-current="page">For health plans</a><a href="#member-story">Member story</a><a href="#pilot">Pilot</a><div class="nav-drop sub-drop"><button type="button" aria-expanded="false" aria-haspopup="true">Learn more ''' + CARET + '''</button><div class="drop-panel drop-docs"><div class="drop-col"><p class="drop-head">Brochures for Medicare Advantage plans (PDF)</p><a href="assets/docs/woundeye-medicare-advantage-brochure-1.pdf" target="_blank" rel="noopener"><strong>The wound that costs the most is the one nobody saw in time</strong><span>One-page brochure &middot; PDF, 2.8 MB</span></a><a href="assets/docs/woundeye-medicare-advantage-brochure-2.pdf" target="_blank" rel="noopener"><strong>Catch the wound at home, before it becomes a claim</strong><span>One-page brochure &middot; PDF, 1.8 MB</span></a></div></div></div></div>
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">A note for Medicare Advantage plans</p>
