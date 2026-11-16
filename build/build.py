@@ -879,6 +879,7 @@ def build():
         <p>Most chronic wounds are first noticed at home, by family. WoundEye turns that moment into an assessment: one photo, two taps on a body map, a few plain questions, and a clinician&rsquo;s answer the same day. No clinic visit, no special camera, no kit.</p>
       </div>
       <div class="btn-row"><a class="btn btn-ink" href="contact.html">Request a WoundEye demo</a><a class="btn btn-line" href="woundeye-health-plans.html">For health plans</a></div>
+      <p class="doc-inline">Brochures for health plans (PDF): <a href="assets/docs/woundeye-medicare-advantage-brochure-1.pdf" target="_blank" rel="noopener">The wound that costs the most</a> &middot; <a href="assets/docs/woundeye-medicare-advantage-brochure-2.pdf" target="_blank" rel="noopener">Catch the wound at home</a></p>
     </div>
     <figure class="figure">
       <div class="plate">{foot_plate('fig-we')}</div>
@@ -971,37 +972,75 @@ def build():
 <div class="wrap"><p class="small" style="padding:1.5rem 0">{WOUNDEYE_LEGAL}</p></div>''')
 
     # ---------- WOUNDEYE FOR HEALTH PLANS
+    B1 = 'assets/docs/woundeye-medicare-advantage-brochure-1.pdf'
+    B2 = 'assets/docs/woundeye-medicare-advantage-brochure-2.pdf'
+    DOCS = f"""<div class="doc-links">
+      <p class="doc-head">Download the brochures (PDF)</p>
+      <a href="{B1}" target="_blank" rel="noopener"><span class="doc-ico">PDF</span><span><b>The wound that costs the most is the one nobody saw in time</b><small>One-page brochure for Medicare Advantage plans &middot; 2.8 MB</small></span></a>
+      <a href="{B2}" target="_blank" rel="noopener"><span class="doc-ico">PDF</span><span><b>Catch the wound at home, before it becomes a claim</b><small>One-page brochure for Medicare Advantage plans &middot; 1.8 MB</small></span></a>
+    </div>"""
+    LM = f'<div class="nav-drop sub-drop"><button type="button" aria-expanded="false" aria-haspopup="true">Learn more {CARET}</button><div class="drop-panel drop-docs"><div class="drop-col"><p class="drop-head">Brochures for Medicare Advantage plans (PDF)</p><a href="{B1}" target="_blank" rel="noopener"><strong>The wound that costs the most is the one nobody saw in time</strong><span>One-page brochure &middot; PDF, 2.8 MB</span></a><a href="{B2}" target="_blank" rel="noopener"><strong>Catch the wound at home, before it becomes a claim</strong><span>One-page brochure &middot; PDF, 1.8 MB</span></a></div></div></div>'
+    def fn(n, first=False):
+        return f'<sup class="fn"><a href="#ref-{n}"' + (f' id="r{n}"' if first else '') + f'>{n}</a></sup>'
     page('woundeye-health-plans', 'WoundEye for Medicare Advantage plans | Wound Solutions AI',
-         'The wound that costs the most is the one nobody saw in time. WoundEye moves the first wound assessment into the home, with a clinician-signed record.', '''
-<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html">How it works</a><a href="woundeye-health-plans.html" aria-current="page">For health plans</a><a href="#member-story">Member story</a><a href="#pilot">Pilot</a><div class="nav-drop sub-drop"><button type="button" aria-expanded="false" aria-haspopup="true">Learn more ''' + CARET + '''</button><div class="drop-panel drop-docs"><div class="drop-col"><p class="drop-head">Brochures for Medicare Advantage plans (PDF)</p><a href="assets/docs/woundeye-medicare-advantage-brochure-1.pdf" target="_blank" rel="noopener"><strong>The wound that costs the most is the one nobody saw in time</strong><span>One-page brochure &middot; PDF, 2.8 MB</span></a><a href="assets/docs/woundeye-medicare-advantage-brochure-2.pdf" target="_blank" rel="noopener"><strong>Catch the wound at home, before it becomes a claim</strong><span>One-page brochure &middot; PDF, 1.8 MB</span></a></div></div></div></div>
+         'Catch the wound at home, before it becomes a claim. WoundEye lets members and caregivers photograph a wound and get a licensed wound-care clinician’s assessment the same day.', f"""
+<div class="wrap subnav" aria-label="WoundEye"><span>WoundEye:</span><a href="woundeye.html">How it works</a><a href="woundeye-health-plans.html" aria-current="page">For health plans</a><a href="#why">Why it fits</a><a href="#member-story">Member story</a><a href="#pilot">Pilot</a>{LM}</div>
 <section class="title-page compact">
-  <div class="wrap">
-    <p class="kicker">A note for Medicare Advantage plans</p>
-    <h1>The wound that costs the most is the one nobody saw in time</h1>
-    <div class="abstract">
-      <p>Of the 10.5 million Medicare beneficiaries living with a chronic wound, almost none have a wound specialist in the house.<sup class="fn"><a href="#ref-1" id="r1">1</a></sup> WoundEye gives the person who is there a way to get a clinician&rsquo;s eye on it the same day.</p>
+  <div class="wrap title-grid" style="align-items:start">
+    <div>
+      <p class="kicker">For Medicare Advantage plans</p>
+      <h1>The wound that costs the most is the one nobody saw in time</h1>
+      <div class="abstract">
+        <p>Catch the wound at home, before it becomes a claim. WoundEye lets members and family caregivers photograph a wound on any mobile device and get a licensed wound-care clinician&rsquo;s assessment back the same day. Small wounds get seen early, and care managers see them too.</p>
+      </div>
+      <div class="btn-row"><a class="btn btn-ink" href="contact.html">Book a 30-minute demonstration</a></div>
     </div>
+    {DOCS}
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
     <div class="stats" style="margin-top:0">
-      <div class="stat"><div class="v">$22.5B</div><p>What Medicare spends on wound care in a year. Surgical complications and pressure injuries cost the most.<sup class="fn"><a href="#ref-1">1</a></sup></p></div>
-      <div class="stat"><div class="v">16.4%</div><p>Share of Medicare beneficiaries with at least one chronic wound.<sup class="fn"><a href="#ref-1">1</a></sup></p></div>
-      <div class="stat"><div class="v">35.2M</div><p>People in Medicare Advantage in 2026, 55 percent of those eligible.<sup class="fn"><a href="#ref-2" id="r2">2</a></sup></p></div>
-      <div class="stat"><div class="v">45%</div><p>Growth last year in chronic-condition special needs plans.<sup class="fn"><a href="#ref-2">2</a></sup></p></div>
+      <div class="stat"><div class="v">46%</div><p>of Medicare patients discharged to home health get no home health visit within 14 days.{fn(1,True)}</p></div>
+      <div class="stat"><div class="v">$11,710</div><p>added health care cost per year for a Medicare patient with a diabetic foot ulcer.{fn(2,True)}</p></div>
+      <div class="stat"><div class="v">17.6%</div><p>of Medicare patients hospitalized with a diabetic foot ulcer lost a leg or died within 30 days.{fn(3,True)}</p></div>
+      <div class="stat"><div class="v">150,000</div><p>non-traumatic leg amputations in the US each year, most of them in people with diabetes.{fn(4,True)}</p></div>
     </div>
   </div>
 </section>
 
 <section class="section paper">
   <div class="wrap article">
-    <h2>Most chronic wounds are first noticed at home, by family</h2>
-    <p>A pressure injury on a heel, or an ulcer on the sole of a diabetic foot, does not announce itself. It starts small, at home, and the people around it are a spouse, a daughter, a home-health aide. By the time it reaches a clinic it has often become the episode every plan knows: an admission, a surgery, sometimes an amputation. The expensive part is almost always the late part.</p>
-    <p>WoundEye changes where the first look happens. A member or caregiver photographs the wound on the mobile device they already own, marks the spot on a body map and answers a few plain questions. WoundAI offers a first read. A clinician confirms or corrects it, and that clinician&rsquo;s assessment, not the model&rsquo;s, becomes the record.</p>
-    <p>The member gets an answer in plain language the same day. The care manager sees the same record, with a photo timeline, a trend line and a flag when a wound is going the wrong way.</p>
+    <h2>The first person to see a wound is usually someone at home</h2>
+    <p>A pressure injury on a heel, or an ulcer on the sole of a diabetic foot, does not announce itself. It starts small, at home, and the people around it are a spouse, a daughter, a home-health aide. By the time it reaches a clinic it has often become the episode every plan knows: an admission, a surgery, sometimes an amputation. Medicare spent as much as $67 billion on wound care in 2019,{fn(5,True)} and the expensive part is almost always the late part.</p>
+    <p>WoundEye changes where the first look happens. A member or caregiver photographs the wound on whatever mobile device they already own, marks the spot on a body map and answers a few plain questions. A licensed wound-care clinician reviews the photograph and writes the assessment, and that assessment becomes the record.</p>
+    <p>The member gets an answer in plain language the same day. The care manager sees the same record, with a photo timeline, a trend line and the clinician&rsquo;s note when a wound is getting worse.</p>
     <blockquote class="pull mt-2">No clinic visit, no special camera, no kit. The wound gets seen while it is still small enough to be cheap.</blockquote>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-head"><h2>Four reasons it fits a plan</h2><p class="lede">Why care-management teams choose WoundEye for their highest-risk members.</p></div>
+    <div class="reasons">
+      <div><h3>Reach the wound before the expensive episode</h3><p>A diabetic foot ulcer or pressure injury noticed late can become an admission, a surgery or an amputation. WoundEye brings a clinician&rsquo;s assessment to the wound while it is still small.</p></div>
+      <div><h3>Reach members where they are</h3><p>No clinic visit, no special camera, no kit. A guided photo on a mobile device, a tap on a body map and pain in plain language. It fits home-based care, post-discharge follow-up and rural members with no wound clinic nearby.</p></div>
+      <div><h3>Support care coordination and member experience</h3><p>Every wound has a photo timeline, a measurement trend and a licensed clinician&rsquo;s sign-off on the record. When a wound is getting worse, the reviewing clinician flags it for the care manager.</p></div>
+      <div><h3>Plug into care management</h3><p>Structured export in FHIR R4, JSON and CSV, a pull API and signed webhooks, and PDF reports ready for the chart. Care managers get the member&rsquo;s whole wound history in one place. Pricing is per member per month, scaled to plan size.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section paper">
+  <div class="wrap">
+    <div class="section-head"><h2>How it works</h2><p class="lede">Four steps from the kitchen table to a clinician-signed record.</p></div>
+    <ol class="steps">
+      <li><div><h3>Capture</h3><p>The member or caregiver photographs the wound on a mobile device. Image metadata is stripped and the photo goes to secure storage.</p></div></li>
+      <li><div><h3>Locate</h3><p>Two taps on a clinical body map, region then zone, so the same site is tracked visit after visit.</p></div></li>
+      <li><div><h3>Assess</h3><p>A licensed wound-care clinician reviews the photograph and its location and assesses type, severity and stage.</p></div></li>
+      <li><div><h3>Respond</h3><p>The clinician completes the structured assessment, gives the member guidance and sets follow-up. The record shows who decided.</p></div></li>
+    </ol>
   </div>
 </section>
 
@@ -1035,10 +1074,10 @@ def build():
 
     <h3 class="mt-3" style="font-weight:400;font-style:italic">Why this story is ordinary, not rare</h3>
     <div class="stats">
-      <div class="stat"><div class="v">29.7%</div><p>of high-risk patients who developed a pressure injury in hospital were discharged home.<sup class="fn"><a href="#ref-3" id="r3">3</a></sup></p></div>
-      <div class="stat"><div class="v">59.7%</div><p>of hospitalized stage 2&ndash;4 pressure ulcers had been recorded by the nursing home. Records miss wounds.<sup class="fn"><a href="#ref-4" id="r4">4</a></sup></p></div>
-      <div class="stat"><div class="v">2&times;</div><p>Trained nurses told moisture damage from pressure injury correctly 70.7% of the time, against 35.6% untrained.<sup class="fn"><a href="#ref-5" id="r5">5</a></sup></p></div>
-      <div class="stat"><div class="v">Stage</div><p>decides coverage. Medicare lists treating extensive pressure ulcers as skilled nursing; a small ulcer generally is not.<sup class="fn"><a href="#ref-6" id="r6">6</a></sup></p></div>
+      <div class="stat"><div class="v">29.7%</div><p>of high-risk patients who developed a pressure injury in hospital were discharged home.{fn(6,True)}</p></div>
+      <div class="stat"><div class="v">59.7%</div><p>of hospitalized stage 2&ndash;4 pressure ulcers had been recorded by the nursing home. Records miss wounds.{fn(7,True)}</p></div>
+      <div class="stat"><div class="v">2&times;</div><p>Trained nurses told moisture damage from pressure injury correctly 70.7% of the time, against 35.6% untrained.{fn(8,True)}</p></div>
+      <div class="stat"><div class="v">Stage</div><p>decides coverage. Medicare lists treating extensive pressure ulcers as skilled nursing; a small ulcer generally is not.{fn(9,True)}</p></div>
     </div>
   </div>
 </section>
@@ -1047,20 +1086,35 @@ def build():
   <div class="wrap">
     <h2>What the record does for a plan</h2>
     <dl class="pillars" style="border-top-color:#E9E1D0">
-      <div><dt style="color:#F7F2E8">An earlier first look</dt><dd style="color:#C8C1B1">The wound is assessed the day someone at home notices it, where your highest-risk members already are: post-discharge, in rural counties, in chronic-condition plans.</dd></div>
-      <div style="border-left-color:#4B5468"><dt style="color:#F7F2E8">Evidence for the right level of care</dt><dd style="color:#C8C1B1">Dated photos and measurements show what the wound needs, in either direction, with a clinician&rsquo;s sign-off on every assessment.</dd></div>
-      <div style="border-left-color:#4B5468"><dt style="color:#F7F2E8">A decision trail</dt><dd style="color:#C8C1B1">Post-acute coverage decisions are under review by the Senate and the courts.<sup class="fn"><a href="#ref-7" id="r7" style="color:#E3A79C">7</a></sup> The record, with an audit trail written by the database, shows what each one rested on.</dd></div>
+      <div><dt style="color:#F7F2E8">An earlier first look</dt><dd style="color:#C8C1B1">The wound is assessed the day someone at home notices it, where your highest-risk members already are: post-discharge and in rural counties.</dd></div>
+      <div style="border-left-color:#4B5468"><dt style="color:#F7F2E8">Evidence for the right level of care</dt><dd style="color:#C8C1B1">Dated photos and measurements show what the wound needs, in either direction, with a licensed clinician&rsquo;s sign-off on every assessment.</dd></div>
+      <div style="border-left-color:#4B5468"><dt style="color:#F7F2E8">A decision trail</dt><dd style="color:#C8C1B1">Post-acute coverage decisions are under review by the Senate and the courts.{fn(10,True)} The record, with an audit trail written by the database, shows what each one rested on.</dd></div>
     </dl>
   </div>
 </section>
 
-<section class="section" id="pilot">
+<section class="section paper">
   <div class="wrap article">
-    <h2>We would rather show you than tell you</h2>
-    <aside class="note"><b>Pricing.</b> Per member per month, scaled to the size of the plan.</aside>
-    <p class="lede">Bring a wound photograph of your own to a thirty-minute demonstration and watch it assessed.</p>
-    <p>If it earns its place, we scope a pilot inside one care-management program and measure what changes. WoundEye connects to what you already run: FHIR R4, JSON and CSV export, a pull API with signed webhooks, and PDF reports ready for the chart.</p>
-    <div class="btn-row"><a class="btn btn-ink" href="contact.html">Book a demonstration</a><a class="btn btn-line" href="mailto:hello@woundeye.com">hello@woundeye.com</a></div>
+    <h2>Privacy and security, by design</h2>
+    <ul>
+      <li>Encrypted in transit and at rest.</li>
+      <li>Access by role and relationship, enforced in the database, not the screen.</li>
+      <li>An immutable audit trail of every change, readable only by administrators.</li>
+      <li>Photographs never pass through a third-party AI service.</li>
+      <li>Emails carry no patient details; exports go by scoped API key.</li>
+      <li>A Business Associate Agreement is available.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="pilot">
+  <div class="wrap title-grid" style="align-items:start">
+    <div>
+      <h2>See it with your own members</h2>
+      <p class="lede mt-1">Bring your care-management team to a thirty-minute live demonstration of the member and clinician workflow. If it earns its place, we scope a pilot inside one care-management program and measure what changes.</p>
+      <div class="btn-row"><a class="btn btn-ink" href="contact.html">Book a demonstration</a><a class="btn btn-line" href="mailto:hello@woundeye.com">hello@woundeye.com</a></div>
+    </div>
+    {DOCS}
   </div>
 </section>
 
@@ -1068,18 +1122,21 @@ def build():
   <div class="wrap">
     <h2 style="font-size:1.4rem">Notes</h2>
     <ol class="references mt-1">
-      <li id="ref-1">Carter, Fife, Nusgart et al., <i>Journal of Medical Economics</i>, 2023 (Medicare chronic-wound prevalence and cost, 2019).</li>
-      <li id="ref-2">KFF, <i>Medicare Advantage in 2026: Enrollment Update and Key Trends</i>.</li>
-      <li id="ref-3">ISPOR 2026 poster, all-payor claims 2023.</li>
-      <li id="ref-4">Chen, Gleason, Sanghavi, <i>Medical Care</i>, 2022.</li>
-      <li id="ref-5">Beeckman et al., <i>BMJ Quality &amp; Safety</i>.</li>
-      <li id="ref-6">42 CFR 409.33; SSA POMS HI 00601.350.</li>
-      <li id="ref-7">Senate PSI majority staff report, Oct. 2024; Estate of Lokken v. UnitedHealth Group (D. Minn.), pending.</li>
+      <li id="ref-1">Li, Qi, Werner, <i>JAMA Network Open</i>, 2020 (home health visits after hospital discharge, 2016 Medicare data).</li>
+      <li id="ref-2">Rice et al., <i>Diabetes Care</i>, 2014 (cost of diabetic foot ulcers to Medicare).</li>
+      <li id="ref-3">Brennan et al., <i>JAMA Network Open</i>, 2022 (Medicare beneficiaries hospitalized with diabetic foot ulcers, 2013&ndash;2014).</li>
+      <li id="ref-4">Creager et al., <i>Circulation</i>, 2021 (non-traumatic amputations).</li>
+      <li id="ref-5">Carter, Fife, Nusgart et al., <i>Journal of Medical Economics</i>, 2023 (Medicare wound care cost, 2019: the study&rsquo;s high estimate, counting care where a wound was a primary or secondary diagnosis).</li>
+      <li id="ref-6">ISPOR 2026 poster, all-payor claims 2023.</li>
+      <li id="ref-7">Chen, Gleason, Sanghavi, <i>Medical Care</i>, 2022.</li>
+      <li id="ref-8">Beeckman et al., <i>BMJ Quality &amp; Safety</i>.</li>
+      <li id="ref-9">42 CFR 409.33; SSA POMS HI 00601.350.</li>
+      <li id="ref-10">Senate PSI majority staff report, Oct. 2024; Estate of Lokken v. UnitedHealth Group (D. Minn.), pending.</li>
     </ol>
-    <p class="small mt-2">''' + WOUNDEYE_LEGAL + '''</p>
+    <p class="small mt-2">WoundEye is an application that connects members with a licensed wound-care clinician. The app itself does not diagnose, treat, cure or prevent disease; every assessment is made by the reviewing clinician. WoundEye is a product of Wound Solutions AI LLC.</p>
   </div>
 </section>
-''')
+""")
 
     # ---------- PRESSURE ULCER STUDY
     page('pressure-ulcer-study', 'Pressure ulcer study: 78.9% fewer full-thickness HAPIs | Wound Solutions AI',
