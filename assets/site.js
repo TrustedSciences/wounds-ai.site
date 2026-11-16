@@ -100,3 +100,41 @@
   window.addEventListener('load', measure);
   measure();
 })();
+
+// Home: sections snap into place under the menu when scrolling stops just short of them.
+// Only ever snaps in the direction of travel, so it can never hold the reader back.
+(function () {
+  if (!document.querySelector('main > .hero') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var header = document.querySelector('.site-header');
+  var targets = Array.prototype.slice.call(document.querySelectorAll('.flow-intro .flow, main > .hero ~ section:not(.flow-intro)'));
+  var lastY = window.scrollY, dir = 0, timer = null, auto = false, autoTimer = null, touching = false;
+  function points() {
+    var headH = header ? header.offsetHeight : 0, max = document.documentElement.scrollHeight - window.innerHeight;
+    var pts = [0];
+    targets.forEach(function (el) {
+      var gap = el.classList.contains('flow') ? 16 : 0;
+      pts.push(Math.min(max, Math.round(el.getBoundingClientRect().top + window.scrollY - headH - gap)));
+    });
+    return pts;
+  }
+  function settle() {
+    if (touching || auto) return;
+    var y = window.scrollY, reach = window.innerHeight * 0.3, best = null;
+    points().forEach(function (p) {
+      var d = p - y;
+      if (dir > 0 && d > 4 && d <= reach && (best === null || p < best)) best = p;
+      if (dir < 0 && d < -4 && -d <= reach && (best === null || p > best)) best = p;
+    });
+    if (best !== null) { auto = true; window.scrollTo({ top: best, behavior: 'smooth' }); }
+  }
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY;
+    if (auto) { clearTimeout(autoTimer); autoTimer = setTimeout(function () { auto = false; lastY = window.scrollY; }, 180); lastY = y; return; }
+    if (y !== lastY) dir = y > lastY ? 1 : -1;
+    lastY = y;
+    clearTimeout(timer); timer = setTimeout(settle, 150);
+  }, { passive: true });
+  window.addEventListener('wheel', function () { if (auto) { auto = false; clearTimeout(autoTimer); } }, { passive: true });
+  window.addEventListener('touchstart', function () { touching = true; auto = false; }, { passive: true });
+  window.addEventListener('touchend', function () { touching = false; clearTimeout(timer); timer = setTimeout(settle, 250); }, { passive: true });
+})();

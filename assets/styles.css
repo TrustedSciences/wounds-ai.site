@@ -517,5 +517,6 @@ main > section.section:has(.photo-band) .muted, main > section.section:has(.phot
 }
 
 /* ---------- Home: the flow visual snaps into place under the menu ---------- */
-html:has(.flow-intro) { scroll-snap-type: y proximity; }
-.flow-intro .flow { scroll-snap-align: start; scroll-snap-stop: normal; scroll-margin-top: calc(4.5rem + 1rem); }
+.flow-intro .flow { scroll-margin-top: calc(4.5rem + 1rem); }
+/* Home: every section after the flow also snaps under the menu */
+main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px); }
