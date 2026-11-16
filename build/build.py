@@ -882,6 +882,7 @@ def build():
       </div>
       <div class="btn-row"><a class="btn btn-ink" href="contact.html">Request a WoundEye demo</a><a class="btn btn-line" href="woundeye-health-plans.html">For health plans</a></div>
       <p class="doc-inline">Brochures for health plans (PDF): <a href="assets/docs/woundeye-medicare-advantage-brochure-1.pdf" target="_blank" rel="noopener">The wound that costs the most</a> &middot; <a href="assets/docs/woundeye-medicare-advantage-brochure-2.pdf" target="_blank" rel="noopener">Catch the wound at home</a></p>
+      <p class="doc-inline">Visit the WoundEye website: <a href="https://woundeye.com/" target="_blank" rel="noopener">woundeye.com</a></p>
     </div>
     <figure class="figure">
       <div class="plate">{foot_plate('fig-we')}</div>
