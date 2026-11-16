@@ -72,3 +72,31 @@
     });
   }
 })();
+
+// Home hero: pin it, then fade it out as the next section scrolls over it
+(function () {
+  var hero = document.querySelector('main > .hero');
+  if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var header = document.querySelector('.site-header');
+  var ticking = false, heroH = 0, headH = 0;
+  function measure() {
+    headH = header ? header.offsetHeight : 0;
+    heroH = hero.offsetHeight;
+    // If the hero is taller than the screen, let it scroll until its bottom shows, then pin
+    var top = Math.min(headH, window.innerHeight - heroH);
+    hero.style.setProperty('--hero-top', top + 'px');
+    update();
+  }
+  function update() {
+    ticking = false;
+    var start = Math.max(0, heroH + headH - window.innerHeight);   // scroll position where it pins
+    var span = Math.min(heroH, window.innerHeight - headH) * 0.85;  // distance over which it fades
+    var p = Math.min(1, Math.max(0, (window.scrollY - start) / span));
+    hero.style.opacity = (1 - p).toFixed(3);
+    hero.style.visibility = p >= 1 ? 'hidden' : '';
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', measure);
+  window.addEventListener('load', measure);
+  measure();
+})();

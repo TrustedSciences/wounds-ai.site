@@ -507,3 +507,15 @@ main > section.section:has(.photo-band) .muted, main > section.section:has(.phot
 .flow .result-label { font: italic 13px var(--serif); fill: #9FCFC6; }
 .flow-legend .l-result { background: #7FC4B8; }
 .flow-counts .res b { color: #9FCFC6; }
+
+/* ---------- Home hero: stays pinned and fades as the next section slides over it ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  main > .hero { position: sticky; top: var(--hero-top, 4.5rem); z-index: 0; will-change: opacity; }
+  main > .hero ~ section { position: relative; z-index: 1; }
+  :where(main > .hero ~ .section) { background-color: var(--sand); }
+  main > .hero + section { box-shadow: 0 -24px 48px -28px rgba(27,36,51,.45); }
+}
+
+/* ---------- Home: the flow visual snaps into place under the menu ---------- */
+html:has(.flow-intro) { scroll-snap-type: y proximity; }
+.flow-intro .flow { scroll-snap-align: start; scroll-snap-stop: normal; scroll-margin-top: calc(4.5rem + 1rem); }

@@ -316,7 +316,7 @@ def build():
     <p class="hero-sub">Integrated wound documentation, risk prevention and clinical oversight that help healthcare teams deliver better care in less time.</p>
     <div class="btn-row">
       <a class="btn btn-light" href="contact.html">Request a demo</a>
-      <a class="btn btn-ghost" href="#how-it-fits">See how it works</a>
+      <a class="btn btn-ghost" href="#wsa-flow">See how it works</a>
     </div>
     <ul class="hero-settings" aria-label="Where we work">
       <li>Skilled nursing</li><li>LTACH</li><li>Rehabilitation</li><li>Critical access</li><li>Home</li>
