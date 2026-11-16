@@ -457,5 +457,28 @@ table.cmp td, table.cmp th { padding-right: 1rem; }
 table.cmp td.us sup.fn a { color: #E3A79C; }
 
 /* Drop-down hover bridge: invisible strip covering the gap between button and panel */
-.drop-panel::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: -1.6rem; height: 1.6rem; }
+.drop-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -0.6rem; height: 0.6rem; }
 @media (min-width: 961px) { .nav-drop.open > button { background: var(--dune); } }
+
+/* ---------- Slate band (#7F95AE): home "Efficient and effective" ---------- */
+.section.slate, main > section.section:has(.photo-band) { background: #7F95AE; border-bottom-color: #6A7F98; }
+.section.slate h2, .section.slate dt, .section.slate .lede, .section.slate .muted, .section.slate dd, .section.slate figcaption,
+main > section.section:has(.photo-band) h2, main > section.section:has(.photo-band) dt, main > section.section:has(.photo-band) .lede,
+main > section.section:has(.photo-band) .muted, main > section.section:has(.photo-band) dd, main > section.section:has(.photo-band) figcaption { color: #141B27; }
+.section.slate .pillars, main > section.section:has(.photo-band) .pillars { border-top-color: #141B27; }
+.section.slate .pillars > div + div, main > section.section:has(.photo-band) .pillars > div + div { border-left-color: rgba(20,27,39,.35); }
+.section.slate .photo img, main > section.section:has(.photo-band) .photo img { border-color: #141B27; }
+
+/* ---------- WoundEye sub-bar "Learn more" drop-down ---------- */
+.subnav { align-items: center; }
+.sub-drop { position: relative; margin-left: auto; }
+.sub-drop > button { font: 700 .92rem var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--ink); border-radius: 3px; padding: .4rem .75rem; cursor: pointer; display: inline-flex; align-items: center; gap: .35rem; }
+.sub-drop > button:hover, .sub-drop.open > button { background: var(--ink); color: var(--paper); }
+.drop-panel.drop-docs { width: 26rem; grid-template-columns: 1fr; left: auto; right: 0; transform: none; z-index: 40; }
+.drop-panel.drop-docs a strong { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; line-height: 1.3; }
+@media (max-width: 960px) {
+  .sub-drop { margin-left: 0; width: 100%; }
+  .sub-drop .drop-panel.drop-docs { position: absolute; left: 0; right: auto; width: min(26rem, 92vw); background: var(--paper); border: 1px solid var(--rule); box-shadow: 0 18px 40px -24px rgba(27,36,51,.45); }
+  .sub-drop.open .drop-panel { display: grid; }
+}
+.wrap.subnav { padding-left: var(--gutter); padding-right: var(--gutter); }
