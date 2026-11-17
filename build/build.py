@@ -337,6 +337,40 @@ FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-variant="woundeye">
   </div>
 </div>"""
 
+FLOW_WR = """<div class="flow flow-wr" id="wsa-flow" data-variant="woundrounds">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
+      <button type="button" data-stage="1">1. Bedside documentation</button>
+      <button type="button" data-stage="3">2. Clinical review</button>
+      <button type="button" data-stage="4">3. Act and record</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>Documented at the bedside</div>
+        <div><b data-count="confirmed">0</b>Specialist-reviewed</div>
+        <div class="flag"><b data-count="flagged">0</b>Flagged for follow-up</div>
+        <div><b data-count="record">0</b>In the record</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate">Assessments per day</label><b data-rate-out>120</b></div>
+        <input id="flow-rate" type="range" min="30" max="600" step="10" value="120" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>Documented, awaiting specialist review</span>
+    <span><i class="l-ok"></i>Reviewed by a certified wound specialist</span>
+    <span><i class="l-flag"></i>Flagged: suspected infection, follow-up set</span>
+    <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>"""
+
 # ---------------------------------------------------------------- pages
 def build():
     os.makedirs(OUT, exist_ok=True)
@@ -849,6 +883,10 @@ def build():
     <p><a class="sans" href="https://www.woundrounds.com" target="_blank" rel="noopener"><b>Visit woundrounds.com</b></a></p>
     ''' + photo('hero-clinicians', 'Clinicians reviewing wound documentation on a tablet', 'WoundRounds puts the wound record in front of the whole care team.', '5/3') + '''
   </div>
+  <div class="wrap flow-wide mt-3">
+    <h3 class="flow-title">How a WoundRounds assessment moves</h3>
+    ''' + FLOW_WR + '''
+  </div>
 </section>
 
 <section class="section paper" id="woundeye">
@@ -901,7 +939,7 @@ def build():
     <p class="small mt-2">Client-reported outcomes for WoundRounds. For a peer-reviewed example, see the <a href="pressure-ulcer-study.html">pressure ulcer study</a>.</p>
   </div>
 </section>
-''' + cta())
+''' + cta() + '<script src="assets/flow.js"></script>')
 
     # ---------- WOUNDEYE
     page('woundeye', 'WoundEye | Wound capture and care coordination at home',

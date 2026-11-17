@@ -89,8 +89,37 @@
   ];
   if (variant === 'woundeye') STAGES = STAGES_WE;
 
+  // WoundRounds-only variant (used on the Solutions page): facilities -> WoundRounds -> specialists -> outputs
+  var LAYOUTS_WR = {
+    h: { W: 1200, H: 560, dir: 'h', loopLabel: [600, 34],
+      caps: [[110, 'Where wounds are seen'], [400, 'Bedside documentation'], [730, 'Clinical review'], [1060, 'Act and record']],
+      pos: {
+        snf: [110, 150, 160, 46], ltach: [110, 230, 160, 46], rehab: [110, 310, 160, 46], cah: [110, 390, 160, 46],
+        wr: [400, 270, 200, 80], cwa: [730, 300, 230, 96],
+        dash: [1060, 140, 190, 60], rec: [1060, 250, 190, 60], ehr: [1060, 360, 190, 60], trend: [1060, 470, 190, 60]
+      } },
+    v: { W: 400, H: 720, dir: 'v', loopLabel: [20, 470],
+      pos: {
+        snf: [110, 46, 170, 40], ltach: [292, 46, 170, 40], rehab: [110, 100, 170, 40], cah: [292, 100, 170, 40],
+        wr: [200, 230, 220, 70], cwa: [200, 420, 250, 84],
+        dash: [110, 590, 172, 56], rec: [292, 590, 172, 56], ehr: [110, 670, 172, 56], trend: [292, 670, 172, 56]
+      } }
+  };
+  var STAGES_WR = [
+    { n: 0, title: 'The WoundRounds loop',
+      body: 'Nurses document at the bedside in WoundRounds, and each assessment goes straight to our Clinical Wound Assessment team. Certified wound specialists review it, flag what needs attention and sign the record. The result reaches the care team dashboard, the defensible record, the EHR and the healing trend, and the next assessment joins the same wound\u2019s timeline.' },
+    { n: 1, num: 1, title: 'Bedside documentation',
+      body: 'Nurses in skilled nursing, LTACH, rehabilitation and critical access hospitals document at the bedside in WoundRounds: photo, location, measurements and Braden risk, in the facility\u2019s own workflow. Risk dashboards show each patient\u2019s drivers for potential harm.' },
+    { n: 2 },
+    { n: 3, num: 2, title: 'Clinical review',
+      body: 'Certified wound specialists on our Clinical Wound Assessment team review WoundRounds assessments. They check staging and measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. The record shows who decided, and when.' },
+    { n: 4, num: 3, title: 'Act and record',
+      body: 'The reviewed assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review, exports to the EHR, and adds a point to the wound\u2019s healing trend. Flagged wounds come back for follow-up, joining the same timeline.' }
+  ];
+  if (variant === 'woundrounds') STAGES = STAGES_WR;
+
   // ---------------------------------------------------------------- state
-  var S = { L: null, mode: variant === 'woundeye' ? 'home' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
+  var S = { L: null, mode: variant === 'woundeye' ? 'home' : variant === 'woundrounds' ? 'fac' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
             counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
   var svg, gEdges, gFlow, gNodes, gParts, paths = {}, nodeEls = {}, particles = [], pool = [];
   var spawnAcc = 0, last = 0;
@@ -146,7 +175,7 @@
   // ---------------------------------------------------------------- build
   function build() {
     var wide = root.clientWidth >= 760;
-    var L = (variant === 'woundeye' ? LAYOUTS_WE : LAYOUTS)[wide ? 'h' : 'v'];
+    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : LAYOUTS)[wide ? 'h' : 'v'];
     if (S.L === L && svg) return;
     S.L = L;
     stage.innerHTML = '';
@@ -183,11 +212,13 @@
       el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': 'dash', 'data-b': 'wr' }, gFlow);
       paths['loop'] = { el: lb, len: lb.getTotalLength(), a: 'dash', b: 'wr' };
     }
+    if (L.pos.home && L.pos.we && L.pos.ai) {
     var rp = resultPath();
     var rb = el('path', { d: rp, 'class': 'edge result', 'data-a': 'cwa', 'data-b': 'home' }, gEdges);
     el('path', { d: rp, 'class': 'edge-flow result', 'data-a': 'cwa', 'data-b': 'home' }, gFlow);
     paths['result'] = { el: rb, len: rb.getTotalLength(), a: 'cwa', b: 'home' };
     if (L.resultLabel) { var rl = el('text', { 'class': 'result-label', x: L.resultLabel[0], y: L.resultLabel[1], 'text-anchor': 'middle' }, svg); rl.textContent = 'Result: the specialist\u2019s assessment goes back through WoundEye to the patient and carer'; }
+    }
     if (L.loopLabel) {
     var ll = el('text', { 'class': 'loop-label', x: L.loopLabel[0], y: L.loopLabel[1], 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
@@ -278,7 +309,7 @@
       b.setAttribute('aria-pressed', String(+b.dataset.stage === st && !f));
     });
     var s = STAGES[st];
-    var head = f ? (NODES[f].label + (NODES[f].label2 ? ' ' + NODES[f].label2 : '')) : (st ? st + '. ' + s.title : s.title);
+    var head = f ? (NODES[f].label + (NODES[f].label2 ? ' ' + NODES[f].label2 : '')) : (st ? (s.num || st) + '. ' + s.title : s.title);
     var body = f ? NODE_NOTES[f] : s.body;
     panel.querySelector('.panel-title').textContent = head;
     panel.querySelector('.panel-body').textContent = body;
