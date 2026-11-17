@@ -867,7 +867,6 @@ def build():
     </div>
     <figure class="figure photo ceo-feature"><img src="assets/img/mike-diamond-feature.webp" alt="Mike Diamond, President and CEO of Wound Solutions AI, in the office" loading="lazy"><figcaption>Mike Diamond, President &amp; CEO</figcaption></figure>
     <ul class="team">
-      <li><img class="headshot" src="assets/img/mike-diamond.webp" alt="Mike Diamond" loading="lazy"><span class="name">Mike Diamond</span><span class="role-title">President &amp; CEO</span></li>
       <li><img class="headshot" src="assets/img/rhett-gustafson.webp" alt="Rhett Gustafson" loading="lazy"><span class="name">Rhett Gustafson</span><span class="role-title">Chief Financial Officer</span></li>
       <li><img class="headshot" src="assets/img/betty-czowiecki.webp" alt="Betty Czowiecki" loading="lazy"><span class="name">Betty Czowiecki</span><span class="role-title">Director of Delivery</span></li>
       <li><img class="headshot" src="assets/img/david-karr.webp" alt="David Karr" loading="lazy"><span class="name">David Karr</span><span class="role-title">Director of Product Development</span></li>
