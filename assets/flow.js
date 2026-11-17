@@ -1,8 +1,9 @@
 // How WoundRounds, Wound Solutions AI and Clinical Wound Assessments flow together.
 // Self-contained: needs a <div id="wsa-flow"> with the markup from platform.html.
 (function () {
-  var root = document.getElementById('wsa-flow');
-  if (!root) return;
+var FLOW_N = 0;
+function initFlow(root) {
+  var uid = 'f' + (FLOW_N++);
   var svgNS = 'http://www.w3.org/2000/svg';
   var stage = root.querySelector('.flow-stage');
   var panel = root.querySelector('.flow-panel');
@@ -24,7 +25,12 @@
     dash:  { label: 'Care team dashboard', sub: 'Flags and follow-ups', stage: 4, kind: 'out' },
     rec:   { label: 'Defensible record', sub: 'Survey and liability', stage: 4, kind: 'out' },
     ehr:   { label: 'EHR and plan export', sub: 'FHIR R4, PDF, CSV', stage: 4, kind: 'out' },
-    trend: { label: 'Healing trend', sub: 'Timeline and PUSH score', stage: 4, kind: 'out' }
+    trend: { label: 'Healing trend', sub: 'Timeline and PUSH score', stage: 4, kind: 'out' },
+    wrn:   { label: 'WoundRounds', sub: 'Bedside photo and', sub2: 'nurse assessment', stage: 1, kind: 'prod', wide: true },
+    mds:   { label: 'Wound record', sub: 'Updates the MDS', stage: 3, kind: 'prod' },
+    risk:  { label: 'Risk dashboards', sub: 'Braden drivers, alerts', stage: 4, kind: 'out' },
+    qa:    { label: 'QA and survey reports', sub: 'Facility risk summary', stage: 4, kind: 'out' },
+    ehr2:  { label: 'EHR and other systems', sub: 'Facility EHR and more', stage: 4, kind: 'out' }
   };
 
   var STAGES = [
@@ -43,7 +49,9 @@
   var EDGES = [
     ['snf', 'wr'], ['ltach', 'wr'], ['rehab', 'wr'], ['cah', 'wr'], ['home', 'we'],
     ['wr', 'cwa'], ['we', 'ai'], ['ai', 'cwa'],
-    ['cwa', 'dash'], ['cwa', 'rec'], ['cwa', 'ehr'], ['cwa', 'trend']
+    ['cwa', 'dash'], ['cwa', 'rec'], ['cwa', 'ehr'], ['cwa', 'trend'],
+    ['snf', 'wrn'], ['ltach', 'wrn'], ['rehab', 'wrn'], ['cah', 'wrn'], ['wrn', 'mds'],
+    ['mds', 'risk'], ['mds', 'qa'], ['mds', 'ehr2'], ['mds', 'trend']
   ];
 
   // ---------------------------------------------------------------- layouts
@@ -118,8 +126,37 @@
   ];
   if (variant === 'woundrounds') STAGES = STAGES_WR;
 
+  // WoundRounds on its own: the facility nurse captures and assesses; the record feeds the MDS and EHR
+  var LAYOUTS_WRN = {
+    h: { W: 1200, H: 560, dir: 'h', loopLabel: [600, 34], loopFrom: 'risk', loopTo: 'wrn',
+      caps: [[110, 'Where wounds are seen'], [400, 'Bedside capture and assessment'], [730, 'Wound record'], [1060, 'Shared with']],
+      pos: {
+        snf: [110, 150, 160, 46], ltach: [110, 230, 160, 46], rehab: [110, 310, 160, 46], cah: [110, 390, 160, 46],
+        wrn: [400, 270, 210, 92], mds: [730, 300, 210, 84],
+        risk: [1060, 140, 200, 60], qa: [1060, 250, 200, 60], ehr2: [1060, 360, 200, 60], trend: [1060, 470, 200, 60]
+      } },
+    v: { W: 400, H: 720, dir: 'v', loopLabel: [20, 470], loopFrom: 'risk', loopTo: 'wrn',
+      pos: {
+        snf: [110, 46, 170, 40], ltach: [292, 46, 170, 40], rehab: [110, 100, 170, 40], cah: [292, 100, 170, 40],
+        wrn: [200, 230, 230, 84], mds: [200, 420, 230, 76],
+        risk: [110, 590, 172, 56], qa: [292, 590, 172, 56], ehr2: [110, 670, 172, 56], trend: [292, 670, 172, 56]
+      } }
+  };
+  var STAGES_WRN = [
+    { n: 0, title: 'WoundRounds on its own',
+      body: 'The facility nurse photographs the wound at the bedside on the WoundRounds mobile app and completes the assessment: location, measurements, wound bed, Braden risk and treatment. The assessment updates the wound record, which feeds the MDS, and passes to the EHR and the dashboards and reports the care team works from. Follow-up assessments join the same wound\u2019s timeline.' },
+    { n: 1, num: 1, title: 'Bedside capture and assessment',
+      body: 'At the bedside, the nurse captures the photo on the WoundRounds mobile app and records the assessment with standard tools such as the Braden Scale and the PUSH score. WoundRounds is built to capture complete, non-conflicting wound data in the facility\u2019s own workflow.' },
+    { n: 2 },
+    { n: 3, num: 2, title: 'Wound record',
+      body: 'The nurse\u2019s assessment updates the resident\u2019s wound record in WoundRounds, the wound-dedicated EHR, and supports the wound items in the MDS. Every photo and measurement for the same site stays on one timeline.' },
+    { n: 4, num: 3, title: 'Shared with',
+      body: 'The record flows to the facility\u2019s EHR and other systems, to risk dashboards that show each patient\u2019s drivers for harm, and to QA and survey reports. Wounds that need another look come back for follow-up.' }
+  ];
+  if (variant === 'woundrounds-core') STAGES = STAGES_WRN;
+
   // ---------------------------------------------------------------- state
-  var S = { L: null, mode: variant === 'woundeye' ? 'home' : variant === 'woundrounds' ? 'fac' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
+  var S = { L: null, mode: variant === 'woundeye' ? 'home' : (variant === 'woundrounds' || variant === 'woundrounds-core') ? 'fac' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
             counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
   var svg, gEdges, gFlow, gNodes, gParts, paths = {}, nodeEls = {}, particles = [], pool = [];
   var spawnAcc = 0, last = 0;
@@ -165,30 +202,30 @@
   function loopPath() {
     var L = S.L;
     if (L.dir === 'h') {
-      var s = anchor('dash', 't'), e = anchor('wr', 't');
+      var s = anchor(L.loopFrom || 'dash', 't'), e = anchor(L.loopTo || 'wr', 't');
       return 'M' + s + ' C' + s[0] + ',40 ' + (s[0] - 60) + ',52 ' + (s[0] - 160) + ',52 L' + (e[0] + 140) + ',52 C' + (e[0] + 40) + ',52 ' + e[0] + ',60 ' + e;
     }
-    var s2 = anchor('dash', 'l'), e2 = anchor('wr', 'l');
+    var s2 = anchor(L.loopFrom || 'dash', 'l'), e2 = anchor(L.loopTo || 'wr', 'l');
     return 'M' + s2 + ' C' + 8 + ',' + s2[1] + ' ' + 8 + ',' + (s2[1] - 30) + ' 8,' + (s2[1] - 90) + ' L8,' + (e2[1] + 60) + ' C8,' + (e2[1] + 10) + ' 12,' + e2[1] + ' ' + e2;
   }
 
   // ---------------------------------------------------------------- build
   function build() {
     var wide = root.clientWidth >= 760;
-    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : LAYOUTS)[wide ? 'h' : 'v'];
+    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : variant === 'woundrounds-core' ? LAYOUTS_WRN : LAYOUTS)[wide ? 'h' : 'v'];
     if (S.L === L && svg) return;
     S.L = L;
     stage.innerHTML = '';
     particles.forEach(function (p) { p.el.remove(); }); particles = []; pool = []; paths = {}; nodeEls = {};
 
-    svg = el('svg', { viewBox: '0 0 ' + L.W + ' ' + L.H, role: 'img', 'aria-labelledby': 'flow-title flow-desc', 'class': 'is-' + L.dir }, stage);
-    el('title', { id: 'flow-title' }, svg).textContent = 'How WoundRounds, Wound Solutions AI and Clinical Wound Assessments flow together';
-    el('desc', { id: 'flow-desc' }, svg).textContent = STAGES[0].body;
+    svg = el('svg', { viewBox: '0 0 ' + L.W + ' ' + L.H, role: 'img', 'aria-labelledby': uid + '-title ' + uid + '-desc', 'class': 'is-' + L.dir }, stage);
+    el('title', { id: uid + '-title' }, svg).textContent = 'How WoundRounds, Wound Solutions AI and Clinical Wound Assessments flow together';
+    el('desc', { id: uid + '-desc' }, svg).textContent = STAGES[0].body;
 
     var defs = el('defs', {}, svg);
-    var pat = el('pattern', { id: 'flow-grid', width: 24, height: 24, patternUnits: 'userSpaceOnUse' }, defs);
+    var pat = el('pattern', { id: uid + '-grid', width: 24, height: 24, patternUnits: 'userSpaceOnUse' }, defs);
     el('path', { d: 'M24 0H0V24', fill: 'none', stroke: '#24304A', 'stroke-width': 1 }, pat);
-    el('rect', { width: L.W, height: L.H, fill: 'url(#flow-grid)' }, svg);
+    el('rect', { width: L.W, height: L.H, fill: 'url(#' + uid + '-grid)' }, svg);
 
     // column captions
     var cap = el('g', { 'class': 'flow-caps' }, svg);
@@ -206,11 +243,12 @@
       var flow = el('path', { d: d, 'class': 'edge-flow', 'data-a': e[0], 'data-b': e[1] }, gFlow);
       paths[id] = { el: base, flow: flow, len: base.getTotalLength(), a: e[0], b: e[1] };
     });
-    if (L.pos.dash && L.pos.wr) {
+    var lf = L.loopFrom || 'dash', lt = L.loopTo || 'wr';
+    if (L.pos[lf] && L.pos[lt]) {
       var lp = loopPath();
-      var lb = el('path', { d: lp, 'class': 'edge loop', 'data-a': 'dash', 'data-b': 'wr' }, gEdges);
-      el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': 'dash', 'data-b': 'wr' }, gFlow);
-      paths['loop'] = { el: lb, len: lb.getTotalLength(), a: 'dash', b: 'wr' };
+      var lb = el('path', { d: lp, 'class': 'edge loop', 'data-a': lf, 'data-b': lt }, gEdges);
+      el('path', { d: lp, 'class': 'edge-flow loop', 'data-a': lf, 'data-b': lt }, gFlow);
+      paths['loop'] = { el: lb, len: lb.getTotalLength(), a: lf, b: lt };
     }
     if (L.pos.home && L.pos.we && L.pos.ai) {
     var rp = resultPath();
@@ -247,6 +285,10 @@
       el('rect', { x: p[0] - p[2] / 2, y: p[1] - p[3] / 2, width: p[2], height: p[3], rx: 3, 'class': 'shape' }, g);
       if (n.kind === 'src') {
         txt(g, p[0], p[1] + 5, n.label, 'n-src');
+      } else if (n.sub2) {
+        txt(g, p[0], p[1] - 14, n.label, 'n-label');
+        txt(g, p[0], p[1] + 8, n.sub, 'n-sub');
+        txt(g, p[0], p[1] + 25, n.sub2, 'n-sub');
       } else if (n.label2) {
         txt(g, p[0], p[1] - 12, n.label, 'n-label');
         txt(g, p[0], p[1] + 10, n.label2, 'n-label');
@@ -265,6 +307,11 @@
 
   // ---------------------------------------------------------------- focus / panel
   var NODE_NOTES = {
+    wrn: 'The WoundRounds mobile app at the bedside. The nurse photographs the wound and completes the assessment: location, measurements, wound bed, Braden risk and treatment.',
+    mds: 'The nurse\u2019s assessment updates the resident\u2019s wound record in WoundRounds, the wound-dedicated EHR, and supports the wound items in the MDS.',
+    risk: 'Dashboards that show each patient\u2019s risk drivers for potential harm, so the team knows who needs attention first. Flagged wounds come back for follow-up.',
+    qa: 'Quality assurance and survey-ready reporting, including the facility risk summary and facility-acquired wound tracking.',
+    ehr2: 'The wound record passes to the facility\u2019s EHR and other systems.',
     snf: 'Daily documentation, risk prevention and survey readiness for long-term and short-stay residents.',
     ltach: 'The highest-acuity patients in post-acute care, and the highest rate of new pressure injuries.',
     rehab: 'Accurate admission assessments, so wounds present on arrival are recorded as such.',
@@ -322,7 +369,12 @@
     var home = S.mode === 'home' || (S.mode === 'both' && Math.random() < 0.28);
     var route = home ? ['home-we', 'we-ai', 'ai-cwa'] : [pick(['snf', 'snf', 'ltach', 'rehab', 'cah']) + '-wr', 'wr-cwa'];
     var flag = Math.random() < 0.12;
-    if (flag) { route.push('cwa-dash'); if (!home) route.push('loop'); }
+    if (variant === 'woundrounds-core') {
+      route = [pick(['snf', 'snf', 'ltach', 'rehab', 'cah']) + '-wrn', 'wrn-mds'];
+      if (flag) route.push('mds-risk', 'loop');
+      else route.push(pick(['mds-ehr2', 'mds-ehr2', 'mds-qa', 'mds-risk', 'mds-trend']));
+    }
+    else if (flag) { route.push('cwa-dash'); if (!home) route.push('loop'); }
     else route.push(pick(['cwa-dash', 'cwa-rec', 'cwa-rec', 'cwa-ehr', 'cwa-trend']));
     route = route.filter(function (id) { return paths[id]; });
     var c = pool.pop() || el('circle', { r: S.L.dir === 'h' ? 5 : 5.5 }, gParts);
@@ -348,6 +400,7 @@
     var n = nodeEls[to];
     if (n && !reduce) { n.classList.remove('ping'); void n.getBBox(); n.classList.add('ping'); }
     if (to === 'ai') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }
+    if (to === 'mds') { setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; } }
     if (to === 'cwa' && !p.isResult) {
       setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; }
       if (p.home) spawnResult(p.seed);
@@ -416,4 +469,6 @@
     var pt = paths[p.route[p.i]].el.getPointAtLength(p.d); p.el.setAttribute('cx', pt.x); p.el.setAttribute('cy', pt.y); }
   S.counts = { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }; renderCounts();
   requestAnimationFrame(tick);
+}
+document.querySelectorAll('.flow[data-flow]').forEach(initFlow);
 })();

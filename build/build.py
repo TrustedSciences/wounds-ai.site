@@ -258,7 +258,7 @@ def loop_figure():
 </svg>'''
 
 
-FLOW_WIDGET = """<div class="flow" id="wsa-flow">
+FLOW_WIDGET = """<div class="flow" id="wsa-flow" data-flow>
   <div class="flow-bar">
     <div class="flow-steps" role="group" aria-label="Stages">
       <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
@@ -302,7 +302,7 @@ FLOW_WIDGET = """<div class="flow" id="wsa-flow">
   </div>
 </div>"""
 
-FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-variant="woundeye">
+FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-flow data-variant="woundeye">
   <div class="flow-bar">
     <div class="flow-steps" role="group" aria-label="Stages">
       <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
@@ -337,7 +337,7 @@ FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-variant="woundeye">
   </div>
 </div>"""
 
-FLOW_WR = """<div class="flow flow-wr" id="wsa-flow" data-variant="woundrounds">
+FLOW_WR = """<div class="flow flow-wr" id="wsa-flow-wr" data-flow data-variant="woundrounds">
   <div class="flow-bar">
     <div class="flow-steps" role="group" aria-label="Stages">
       <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
@@ -357,8 +357,8 @@ FLOW_WR = """<div class="flow flow-wr" id="wsa-flow" data-variant="woundrounds">
         <div><b data-count="record">0</b>In the record</div>
       </div>
       <div class="flow-rate">
-        <div class="row"><label for="flow-rate">Assessments per day</label><b data-rate-out>120</b></div>
-        <input id="flow-rate" type="range" min="30" max="600" step="10" value="120" data-rate>
+        <div class="row"><label for="flow-rate-wr">Assessments per day</label><b data-rate-out>120</b></div>
+        <input id="flow-rate-wr" type="range" min="30" max="600" step="10" value="120" data-rate>
         <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
       </div>
     </div>
@@ -367,6 +367,40 @@ FLOW_WR = """<div class="flow flow-wr" id="wsa-flow" data-variant="woundrounds">
     <span><i class="l-raw"></i>Documented, awaiting specialist review</span>
     <span><i class="l-ok"></i>Reviewed by a certified wound specialist</span>
     <span><i class="l-flag"></i>Flagged: suspected infection, follow-up set</span>
+    <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>"""
+
+FLOW_WRN = """<div class="flow flow-wr" id="wsa-flow-wrn" data-flow data-variant="woundrounds-core">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
+      <button type="button" data-stage="1">1. Bedside capture and assessment</button>
+      <button type="button" data-stage="3">2. Wound record</button>
+      <button type="button" data-stage="4">3. Shared with</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>Photos captured at the bedside</div>
+        <div><b data-count="confirmed">0</b>Nurse assessments recorded</div>
+        <div class="flag"><b data-count="flagged">0</b>Flagged for follow-up</div>
+        <div><b data-count="record">0</b>Shared with EHR and reports</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate-wrn">Assessments per day</label><b data-rate-out>120</b></div>
+        <input id="flow-rate-wrn" type="range" min="30" max="600" step="10" value="120" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>Photo captured at the bedside</span>
+    <span><i class="l-ok"></i>Assessed by the facility nurse</span>
+    <span><i class="l-flag"></i>Flagged for follow-up</span>
     <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
   </div>
 </div>"""
@@ -884,7 +918,11 @@ def build():
     ''' + photo('hero-clinicians', 'Clinicians reviewing wound documentation on a tablet', 'WoundRounds puts the wound record in front of the whole care team.', '5/3') + '''
   </div>
   <div class="wrap flow-wide mt-3">
-    <h3 class="flow-title">How a WoundRounds assessment moves</h3>
+    <h3 class="flow-title">WoundRounds on its own</h3>
+    <p class="flow-intro-text">The facility nurse captures the photo and performs the assessment at the bedside. The assessment updates the wound record and the MDS, and passes to the EHR and other systems.</p>
+    ''' + FLOW_WRN + '''
+    <h3 class="flow-title mt-3">WoundRounds with Clinical Wound Assessments</h3>
+    <p class="flow-intro-text">Add our certified wound specialists, and every bedside assessment is reviewed before it reaches the record.</p>
     ''' + FLOW_WR + '''
   </div>
 </section>
