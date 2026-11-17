@@ -525,3 +525,6 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .flow-title { font-size: 1.5rem; font-weight: 400; margin-bottom: 1rem; }
 .flow-intro-text { color: var(--ink-2); max-width: 46rem; margin: -.4rem 0 1.1rem; }
 .flow-title.mt-3 { margin-top: 3.5rem; }
+.ceo-feature { margin: 0 0 2.5rem; }
+.ceo-feature img { aspect-ratio: 21/9; object-position: 50% 0; }
+@media (max-width: 760px) { .ceo-feature img { aspect-ratio: 4/3; } }
