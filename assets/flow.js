@@ -61,7 +61,7 @@ function initFlow(root) {
         snf: [95, 130, 150, 44], ltach: [95, 200, 150, 44], rehab: [95, 270, 150, 44], cah: [95, 340, 150, 44], home: [95, 530, 150, 44],
         wr: [345, 235, 190, 76], we: [345, 530, 190, 68],
         ai: [612, 528, 92],
-        cwa: [880, 370, 214, 92],
+        cwa: [830, 330, 214, 92],
         dash: [1110, 150, 168, 58], rec: [1110, 300, 168, 58], ehr: [1110, 450, 168, 58], trend: [1110, 590, 168, 58]
       } },
     v: { W: 400, H: 980, dir: 'v', loopLabel: [20, 720], resultLabel: null,
@@ -258,12 +258,30 @@ function initFlow(root) {
     if (L.resultLabel) { var rl = el('text', { 'class': 'result-label', x: L.resultLabel[0], y: L.resultLabel[1], 'text-anchor': 'middle' }, svg); rl.textContent = 'Result: the specialist\u2019s assessment goes back through WoundEye to the patient and carer'; }
     }
     if (L.loopLabel) {
-    var ll = el('text', { 'class': 'loop-label', x: L.loopLabel[0], y: L.loopLabel[1], 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
+    var llx = L.loopLabel[0], lly = L.loopLabel[1];
+    if (L.dir === 'h') {  // sit just under the dotted line, centred on its straight run
+      var la = anchor(L.loopFrom || 'dash', 't'), lb2 = anchor(L.loopTo || 'wr', 't');
+      llx = ((lb2[0] + 140) + (la[0] - 160)) / 2; lly = 74;
+    }
+    var ll = el('text', { 'class': 'loop-label', x: llx, y: lly, 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
-    ll.textContent = L.dir === 'h' ? 'Follow-up: the next assessment joins the same wound’s timeline' : 'Follow-up joins the same timeline';
+    ll.textContent = L.dir === 'h' ? 'Follow-up loop: wounds flagged for a second look come back for reassessment on the same timeline' : 'Follow-up loop: back for reassessment';
+    ll.setAttribute('tabindex', 0); ll.setAttribute('role', 'button'); ll.classList.add('is-link');
+    ll.addEventListener('click', function () { selectSection('loop'); });
+    ll.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSection('loop'); } });
     }
 
     gParts = el('g', {}, svg);
+    var outs = Object.keys(NODES).filter(function (k) { return NODES[k].kind === 'out' && L.pos[k]; });
+    if (outs.length) {
+      var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      outs.forEach(function (k) { var q = L.pos[k]; x0 = Math.min(x0, q[0] - q[2] / 2); x1 = Math.max(x1, q[0] + q[2] / 2); y0 = Math.min(y0, q[1] - q[3] / 2); y1 = Math.max(y1, q[1] + q[3] / 2); });
+      var pad = L.dir === 'h' ? 14 : 8;
+      var gx0 = Math.max(2, x0 - pad), gx1 = Math.min(L.W - 2, x1 + pad);
+      var og = el('rect', { x: gx0, y: y0 - pad, width: gx1 - gx0, height: y1 - y0 + pad * 2, rx: 6, 'class': 'out-group', tabindex: 0, role: 'button', 'aria-label': 'About this section: ' + sectionTitle('out') }, svg);
+      og.addEventListener('click', function () { selectSection('out'); });
+      og.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSection('out'); } });
+    }
     gNodes = el('g', {}, svg);
     Object.keys(NODES).forEach(function (id) { if (L.pos[id]) drawNode(id); });
 
@@ -283,8 +301,16 @@ function initFlow(root) {
       txt(g, p[0], p[1] + 32, n.sub2, 'n-sub');
     } else {
       el('rect', { x: p[0] - p[2] / 2, y: p[1] - p[3] / 2, width: p[2], height: p[3], rx: 3, 'class': 'shape' }, g);
+      var lg = LOGOS[id];
       if (n.kind === 'src') {
         txt(g, p[0], p[1] + 5, n.label, 'n-src');
+      } else if (lg) {
+        var subs = [n.sub, n.sub2].filter(Boolean), lh = 17, gap = 9;
+        var logoH = Math.min(p[3] * (lg.tall ? 0.42 : 0.34), (p[2] - 26) / lg.ar);
+        var total = logoH + (subs.length ? gap + subs.length * lh - 4 : 0);
+        var top = p[1] - total / 2, logoW = logoH * lg.ar;
+        el('image', { href: lg.src, x: p[0] - logoW / 2, y: top, width: logoW, height: logoH, 'class': 'n-logo', preserveAspectRatio: 'xMidYMid meet' }, g);
+        subs.forEach(function (t, i) { txt(g, p[0], top + logoH + gap + 9 + i * lh, t, 'n-sub'); });
       } else if (n.sub2) {
         txt(g, p[0], p[1] - 14, n.label, 'n-label');
         txt(g, p[0], p[1] + 8, n.sub, 'n-sub');
@@ -306,6 +332,13 @@ function initFlow(root) {
   function txt(g, x, y, s, cls) { var t = el('text', { x: x, y: y, 'text-anchor': 'middle', 'class': cls }, g); t.textContent = s; return t; }
 
   // ---------------------------------------------------------------- focus / panel
+  // Product logos drawn inside their boxes (width / height ratio of each file)
+  var LOGOS = {
+    wr:  { src: 'assets/img/woundrounds-logo.png', ar: 387 / 52 },
+    wrn: { src: 'assets/img/woundrounds-logo.png', ar: 387 / 52 },
+    we:  { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
+    cwa: { src: 'assets/img/assurestage-logo.png', ar: 1000 / 293, tall: true }
+  };
   var NODE_NOTES = {
     wrn: 'The WoundRounds mobile app at the bedside. The nurse photographs the wound and completes the assessment: location, measurements, wound bed, Braden risk and treatment.',
     mds: 'The nurse\u2019s assessment updates the resident\u2019s wound record in WoundRounds, the wound-dedicated EHR, and supports the wound items in the MDS.',
@@ -328,18 +361,30 @@ function initFlow(root) {
   }
   if (variant === 'woundrounds') NODE_NOTES.cwa = 'AssureStage: high-risk WoundRounds assessments go to our certified wound specialists, who review these high-risk wounds and flag which wounds might need a second look. All final clinical decisions are made by the facility\u2019s clinical staff, not by AssureStage.';
 
-  function selectStage(n) { S.stage = n; S.focus = null; applyFocus(); }
-  function selectNode(id) { S.focus = (S.focus === id) ? null : id; S.stage = S.focus ? NODES[id].stage : S.stage; applyFocus(); }
+  function selectStage(n) { S.stage = n; S.focus = null; S.section = null; applyFocus(); }
+  function selectNode(id) { S.section = null; S.focus = (S.focus === id) ? null : id; S.stage = S.focus ? NODES[id].stage : S.stage; applyFocus(); }
+  function selectSection(k) { S.focus = null; S.section = (S.section === k) ? null : k; applyFocus(); }
+  function sectionTitle(k) {
+    if (k === 'loop') return 'Follow-up loop';
+    return variant === 'woundrounds-core' ? 'Shared with' : 'Act and record';
+  }
+  var SECTION_NOTES = {
+    loop: 'When a wound is flagged for a second look, a follow-up is scheduled and the wound comes back to the bedside for another assessment. The new photo and measurements join the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.',
+    out: variant === 'woundrounds-core'
+      ? 'The wound record does not stay in one place. It feeds risk dashboards that show who needs attention first, QA and survey reports for the facility, the EHR and other systems the facility already uses, and the healing trend for each wound.'
+      : 'Once a wound is assessed, the result goes where people act on it. The care team dashboard shows flags and follow-up dates; the defensible record keeps a dated history for surveys and liability review; the EHR export keeps other systems up to date; and the healing trend tracks each wound over time.'
+  };
 
   var FAC = ['snf', 'ltach', 'rehab', 'cah', 'wr'];
   function offMode(id) { return (S.mode === 'fac' && NODES[id].home) || (S.mode === 'home' && FAC.indexOf(id) > -1); }
 
   function applyFocus() {
-    var st = S.stage, f = S.focus;
+    var st = S.stage, f = S.focus, sec = S.section;
+    var lf = S.L.loopFrom || 'dash', lt = S.L.loopTo || 'wr';
     Object.keys(nodeEls).forEach(function (id) {
       var n = NODES[id];
       var hidden = offMode(id);
-      var on = f ? (id === f) : (st === 0 || n.stage === st);
+      var on = f ? (id === f) : sec === 'loop' ? (id === lf || id === lt) : sec === 'out' ? n.kind === 'out' : (st === 0 || n.stage === st);
       if (variant === 'woundeye' && !f && st === 4) on = (id === 'home' || id === 'we');
       nodeEls[id].classList.toggle('dim', !on || hidden);
       nodeEls[id].classList.toggle('hidden-mode', hidden);
@@ -347,18 +392,20 @@ function initFlow(root) {
     });
     svg.querySelectorAll('.edge, .edge-flow').forEach(function (p) {
       var a = p.getAttribute('data-a'), b = p.getAttribute('data-b');
-      var on = f ? (a === f || b === f) : (st === 0 || NODES[a].stage === st || NODES[b].stage === st);
+      var on = f ? (a === f || b === f) : sec === 'loop' ? p.classList.contains('loop') : sec === 'out' ? (NODES[b] && NODES[b].kind === 'out') : (st === 0 || NODES[a].stage === st || NODES[b].stage === st);
       if (variant === 'woundeye' && !f && st) on = st === 4 ? p.classList.contains('result') : (!p.classList.contains('result') && on);
       var hidden = offMode(a) || offMode(b);
       p.classList.toggle('dim', !on || hidden);
       p.classList.toggle('off', hidden);
     });
     root.querySelectorAll('.flow-steps button').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(+b.dataset.stage === st && !f));
+      b.setAttribute('aria-pressed', String(+b.dataset.stage === st && !f && !sec));
     });
     var s = STAGES[st];
-    var head = f ? (NODES[f].label + (NODES[f].label2 ? ' ' + NODES[f].label2 : '')) : (st ? (s.num || st) + '. ' + s.title : s.title);
-    var body = f ? NODE_NOTES[f] : s.body;
+    var head = f ? (NODES[f].label + (NODES[f].label2 ? ' ' + NODES[f].label2 : '')) : sec ? sectionTitle(sec) : (st ? (s.num || st) + '. ' + s.title : s.title);
+    var body = f ? NODE_NOTES[f] : sec ? SECTION_NOTES[sec] : s.body;
+    var lbl = svg.querySelector('.loop-label'); if (lbl) lbl.classList.toggle('active', sec === 'loop');
+    var ogr = svg.querySelector('.out-group'); if (ogr) ogr.classList.toggle('active', sec === 'out');
     panel.querySelector('.panel-title').textContent = head;
     panel.querySelector('.panel-body').textContent = body;
   }
