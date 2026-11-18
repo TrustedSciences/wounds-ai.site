@@ -287,7 +287,7 @@ FLOW_WIDGET = """<div class="flow" id="wsa-flow" data-flow>
       </div>
       <div class="flow-rate">
         <div class="row"><label for="flow-rate">Assessments per day</label><b data-rate-out>150</b></div>
-        <input id="flow-rate" type="range" min="30" max="600" step="10" value="150" data-rate>
+        <input id="flow-rate" type="range" min="30" max="5000" step="10" value="150" data-rate>
         <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
       </div>
     </div>
@@ -324,7 +324,7 @@ FLOW_WE = """<div class="flow flow-we" id="wsa-flow" data-flow data-variant="wou
       </div>
       <div class="flow-rate">
         <div class="row"><label for="flow-rate">Photos per day</label><b data-rate-out>60</b></div>
-        <input id="flow-rate" type="range" min="20" max="300" step="10" value="60" data-rate>
+        <input id="flow-rate" type="range" min="20" max="5000" step="10" value="60" data-rate>
         <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
       </div>
     </div>
@@ -358,7 +358,7 @@ FLOW_WR = """<div class="flow flow-wr" id="wsa-flow-wr" data-flow data-variant="
       </div>
       <div class="flow-rate">
         <div class="row"><label for="flow-rate-wr">Assessments per day</label><b data-rate-out>120</b></div>
-        <input id="flow-rate-wr" type="range" min="30" max="600" step="10" value="120" data-rate>
+        <input id="flow-rate-wr" type="range" min="30" max="5000" step="10" value="120" data-rate>
         <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
       </div>
     </div>
@@ -392,7 +392,7 @@ FLOW_WRN = """<div class="flow flow-wr" id="wsa-flow-wrn" data-flow data-variant
       </div>
       <div class="flow-rate">
         <div class="row"><label for="flow-rate-wrn">Assessments per day</label><b data-rate-out>120</b></div>
-        <input id="flow-rate-wrn" type="range" min="30" max="600" step="10" value="120" data-rate>
+        <input id="flow-rate-wrn" type="range" min="30" max="5000" step="10" value="120" data-rate>
         <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
       </div>
     </div>

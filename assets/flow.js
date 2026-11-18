@@ -399,21 +399,29 @@ function initFlow(root) {
   function arrive(p, edgeId) {
     var to = paths[edgeId].b;
     var n = nodeEls[to];
-    if (n && !reduce) { n.classList.remove('ping'); void n.getBBox(); n.classList.add('ping'); }
+    if (n && !reduce && !p.virtual) { n.classList.remove('ping'); void n.getBBox(); n.classList.add('ping'); }
     if (to === 'ai') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }
     if (to === 'mds') { setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; } }
     if (to === 'cwa' && !p.isResult) {
       setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; }
-      if (p.home) spawnResult(p.seed);
+      if (p.home && !p.virtual) spawnResult(p.seed);
     }
   }
 
+  // Above this many moving dots, extra assessments are counted without being drawn, so high rates stay smooth.
+  var MAX_DOTS = 140;
+  function spawnVirtual() {
+    spawn();
+    var p = particles.pop(); p.el.style.display = 'none'; pool.push(p.el); p.virtual = true;
+    for (var i = 0; i < p.route.length; i++) arrive(p, p.route[i]);
+    S.counts.record++; if (p.home) S.counts.results++;
+  }
   function tick(t) {
     var dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t;
     if (S.playing) {
       S.simSeconds += dt;
       spawnAcc += dt * (S.perDay / 30);  // one simulated day = 30 seconds
-      while (spawnAcc >= 1) { spawnAcc -= 1; spawn(); }
+      while (spawnAcc >= 1) { spawnAcc -= 1; if (particles.length < MAX_DOTS) spawn(); else spawnVirtual(); }
       for (var k = particles.length - 1; k >= 0; k--) {
         var p = particles[k], e = paths[p.route[p.i]];
         p.d += p.speed * dt;
@@ -452,7 +460,7 @@ function initFlow(root) {
     renderCounts();
   });
   var rate = root.querySelector('[data-rate]'), rateOut = root.querySelector('[data-rate-out]');
-  rate.addEventListener('input', function () { S.perDay = +rate.value; rateOut.textContent = rate.value; });
+  rate.addEventListener('input', function () { S.perDay = +rate.value; rateOut.textContent = (+rate.value).toLocaleString('en-US'); });
   root.querySelectorAll('[data-mode]').forEach(function (b) {
     b.addEventListener('click', function () {
       S.mode = b.dataset.mode;
