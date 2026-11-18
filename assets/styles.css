@@ -529,3 +529,6 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .ceo-feature img { aspect-ratio: 21/9; object-position: 50% 0; }
 @media (max-width: 760px) { .ceo-feature img { aspect-ratio: 4/3; } }
 .headshot.in-color { filter: none; }
+.product-logo { margin: 0 0 1rem; line-height: 0; }
+.product-logo img { height: 5.75rem; width: auto; max-width: 100%; display: block; }
+@media (max-width: 760px) { .product-logo img { height: 3.25rem; } }

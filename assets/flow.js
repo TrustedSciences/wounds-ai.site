@@ -1,4 +1,4 @@
-// How WoundRounds, Wound Solutions AI and Clinical Wound Assessments flow together.
+// How WoundRounds, Wound Solutions AI and AssureStage Clinical Wound Assessments flow together.
 // Self-contained: needs a <div id="wsa-flow"> with the markup from platform.html.
 (function () {
 var FLOW_N = 0;
@@ -21,7 +21,7 @@ function initFlow(root) {
     wr:    { label: 'WoundRounds', sub: 'Bedside documentation', stage: 1, kind: 'prod' },
     we:    { label: 'WoundEye', sub: 'Capture at home', stage: 1, kind: 'prod', home: true },
     ai:    { label: 'Wound Solutions AI', sub: 'Workflow agents', sub2: 'Intake, worklist, routing', stage: 2, kind: 'core', home: true },
-    cwa:   { label: 'Clinical Wound', label2: 'Assessments', sub: 'Certified wound specialists', stage: 3, kind: 'prod' },
+    cwa:   { label: 'AssureStage', sub: 'Clinical Wound Assessments', sub2: 'Certified wound specialists', stage: 3, kind: 'prod' },
     dash:  { label: 'Care team dashboard', sub: 'Flags and follow-ups', stage: 4, kind: 'out' },
     rec:   { label: 'Defensible record', sub: 'Survey and liability', stage: 4, kind: 'out' },
     ehr:   { label: 'EHR and plan export', sub: 'FHIR R4, PDF, CSV', stage: 4, kind: 'out' },
@@ -35,12 +35,12 @@ function initFlow(root) {
 
   var STAGES = [
     { n: 0, title: 'The whole loop',
-      body: 'Nurses document at the bedside in WoundRounds, and those assessments go straight to our Clinical Wound Assessment team. At home, WoundEye captures a photo, and Wound Solutions AI\u2019s workflow agents place it on the specialist\u2019s worklist. Certified wound specialists make every clinical decision. For WoundEye, the specialist\u2019s result goes back through the app to the patient, family carer or home nurse. The result also reaches the care team, the record and the systems that need it, and the next follow-up joins the same wound\u2019s timeline.' },
+      body: 'Nurses document at the bedside in WoundRounds, and those assessments go straight to our AssureStage Clinical Wound Assessment team. At home, WoundEye captures a photo, and Wound Solutions AI\u2019s workflow agents place it on the specialist\u2019s worklist. Certified wound specialists make every clinical decision. For WoundEye, the specialist\u2019s result goes back through the app to the patient, family carer or home nurse. The result also reaches the care team, the record and the systems that need it, and the next follow-up joins the same wound\u2019s timeline.' },
     { n: 1, title: 'Capture',
       body: 'Nurses document at the bedside in WoundRounds: photo, location, measurements and Braden risk, in the facility\u2019s own workflow. At home, a patient or family carer uses WoundEye: one photo on their own mobile device and two taps on a body map.' },
     { n: 2, title: 'Worklist',
       body: 'For WoundEye submissions, Wound Solutions AI runs workflow agents that do the administrative work. They check that the photo is usable and filed to the right body site, add it to the certified wound specialist\u2019s worklist, track it until it has been reviewed, send reminders and schedule follow-ups. Agents simplify, manage and scale the workflow. They make no clinical decisions.' },
-    { n: 3, title: 'Clinical Wound Assessment',
+    { n: 3, title: 'AssureStage Clinical Wound Assessment',
       body: 'Certified wound specialists review WoundRounds assessments and WoundEye submissions. They determine wound type and stage, check measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. Every clinical decision is theirs, and the record shows who decided, and when. For WoundEye submissions, the result goes straight back to the patient and carer in the app.' },
     { n: 4, title: 'Act and record',
       body: 'For patients at home, the specialist\u2019s result comes back through WoundEye in plain language: what the wound is, what to do tonight, the signs that mean call 911, and the follow-up date. The same assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review. It exports to the EHR or health plan as FHIR R4, PDF or CSV, and it adds a point to the wound\u2019s healing trend. The next follow-up starts the loop again.' }
@@ -115,12 +115,12 @@ function initFlow(root) {
   };
   var STAGES_WR = [
     { n: 0, title: 'The WoundRounds loop',
-      body: 'Nurses document at the bedside in WoundRounds, and each assessment goes straight to our Clinical Wound Assessment team. Certified wound specialists review it, flag what needs attention and sign the record. The result reaches the care team dashboard, the defensible record, the EHR and the healing trend, and the next assessment joins the same wound\u2019s timeline.' },
+      body: 'Nurses document at the bedside in WoundRounds, and each assessment goes straight to our AssureStage Clinical Wound Assessment team. Certified wound specialists review it, flag what needs attention and sign the record. The result reaches the care team dashboard, the defensible record, the EHR and the healing trend, and the next assessment joins the same wound\u2019s timeline.' },
     { n: 1, num: 1, title: 'Bedside documentation',
       body: 'Nurses in skilled nursing, LTACH, rehabilitation and critical access hospitals document at the bedside in WoundRounds: photo, location, measurements and Braden risk, in the facility\u2019s own workflow. Risk dashboards show each patient\u2019s drivers for potential harm.' },
     { n: 2 },
     { n: 3, num: 2, title: 'Clinical review',
-      body: 'Certified wound specialists on our Clinical Wound Assessment team review WoundRounds assessments. They check staging and measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. The record shows who decided, and when.' },
+      body: 'Certified wound specialists on our AssureStage Clinical Wound Assessment team review WoundRounds assessments. They check staging and measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. The record shows who decided, and when.' },
     { n: 4, num: 3, title: 'Act and record',
       body: 'The reviewed assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review, exports to the EHR, and adds a point to the wound\u2019s healing trend. Flagged wounds come back for follow-up, joining the same timeline.' }
   ];
@@ -219,7 +219,7 @@ function initFlow(root) {
     particles.forEach(function (p) { p.el.remove(); }); particles = []; pool = []; paths = {}; nodeEls = {};
 
     svg = el('svg', { viewBox: '0 0 ' + L.W + ' ' + L.H, role: 'img', 'aria-labelledby': uid + '-title ' + uid + '-desc', 'class': 'is-' + L.dir }, stage);
-    el('title', { id: uid + '-title' }, svg).textContent = 'How WoundRounds, Wound Solutions AI and Clinical Wound Assessments flow together';
+    el('title', { id: uid + '-title' }, svg).textContent = 'How WoundRounds, Wound Solutions AI and AssureStage Clinical Wound Assessments flow together';
     el('desc', { id: uid + '-desc' }, svg).textContent = STAGES[0].body;
 
     var defs = el('defs', {}, svg);
@@ -317,15 +317,16 @@ function initFlow(root) {
     rehab: 'Accurate admission assessments, so wounds present on arrival are recorded as such.',
     cah: 'Specialist-level wound oversight where wound specialists are scarce.',
     home: 'Patients at home, family carers and home nurses. They send the photo through WoundEye, and the specialist\u2019s result comes back to them in the app, in plain language, with guidance and the follow-up date.',
-    wr: 'WoundRounds is the bedside tool: easy documentation, tracking and trending, and dashboards of each patient\u2019s risk drivers. Assessments go straight to the Clinical Wound Assessment team for review.',
+    wr: 'WoundRounds is the bedside tool: easy documentation, tracking and trending, and dashboards of each patient\u2019s risk drivers. Assessments go straight to the AssureStage Clinical Wound Assessment team for review.',
     we: 'WoundEye: one photo on the mobile device the family already owns, two taps on a body map, and a few plain questions. Workflow agents pass the photo to the certified wound specialist\u2019s worklist, and route the specialist\u2019s result back to the patient and carer in the app.',
     ai: 'Workflow agents for WoundEye. They check each photo in, file it to the right body site, build and track the specialist\u2019s worklist, send reminders and schedule follow-ups. They make no clinical decisions. Photographs never pass through a third-party AI service.',
-    cwa: 'Our certified wound specialists review WoundRounds assessments and WoundEye submissions, determine type and stage, and flag suspected infection. Every clinical decision is made by a specialist.',
+    cwa: 'AssureStage: our certified wound specialists review WoundRounds assessments and WoundEye submissions, determine type and stage, and flag suspected infection. For WoundRounds, every final clinical decision is made by the facility\u2019s clinical staff; for WoundEye, by the specialist.',
     dash: 'Live counts by wound type: flagged, follow-up due and recent. A flag clears only when a later assessment clears it.',
     rec: 'A dated, clinician-signed record with an audit trail written by the database. This is what holds up in a survey or a lawsuit.',
     ehr: 'Structured export to the EHR or health plan: FHIR R4, JSON and CSV, signed webhooks, and PDF reports for the chart.',
     trend: 'Every follow-up photo lands on the same body site’s film strip, with the PUSH score, so direction is visible at a glance.'
-  };
+  }
+  if (variant === 'woundrounds') NODE_NOTES.cwa = 'AssureStage: our certified wound specialists review each WoundRounds assessment, check staging and measurements, and flag suspected infection. Every final clinical decision is made by the facility\u2019s clinical staff.';;
 
   function selectStage(n) { S.stage = n; S.focus = null; applyFocus(); }
   function selectNode(id) { S.focus = (S.focus === id) ? null : id; S.stage = S.focus ? NODES[id].stage : S.stage; applyFocus(); }

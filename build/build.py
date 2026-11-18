@@ -46,7 +46,7 @@ def header(active):
             <a class="sub" href="https://www.woundrounds.com"{EXT}><strong>Visit woundrounds.com</strong><span>The WoundRounds website, opens in a new tab</span></a>
             <a href="woundeye.html"{cur('woundeye')}><strong>WoundEye</strong><span>Wound capture and care coordination at home</span></a>
             <a class="sub" href="woundeye-health-plans.html"{cur('woundeye-health-plans')}><strong>WoundEye for health plans</strong><span>For Medicare Advantage care management</span></a>
-            <a href="solutions.html#wound-qa"><strong>Wound QA Services</strong><span>Expert review by certified wound specialists</span></a>
+            <a href="solutions.html#wound-qa"><strong>AssureStage</strong><span>Expert review by certified wound specialists</span></a>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ def footer():
           <li><a href="https://www.woundrounds.com" target="_blank" rel="noopener">woundrounds.com</a></li>
           <li><a href="woundeye.html">WoundEye</a></li>
           <li><a href="woundeye-health-plans.html">WoundEye for health plans</a></li>
-          <li><a href="solutions.html#wound-qa">Wound QA Services</a></li>
+          <li><a href="solutions.html#wound-qa">AssureStage</a></li>
           <li><a href="evidence.html">Evidence and studies</a></li>
           <li><a href="compare.html">Compare platforms</a></li>
           <li><a href="pressure-ulcer-study.html">Pressure ulcer study</a></li>
@@ -480,9 +480,9 @@ def build():
       </article>
       <article class="product">
         <p class="setting">Any setting</p>
-        <h3>Wound QA Services</h3>
+        <h3>AssureStage</h3>
         <p>Expert review of wound documentation by certified wound specialists, so assessments are accurate, complete and defensible.</p>
-        <a class="more" href="solutions.html#wound-qa">About Wound QA</a>
+        <a class="more" href="solutions.html#wound-qa">About AssureStage</a>
       </article>
     </div>
 
@@ -547,8 +547,8 @@ def build():
 
 
     # ---------- PLATFORM (flow visual)
-    page('platform', 'How it fits together | WoundRounds, Wound Solutions AI and Clinical Wound Assessments',
-         'An interactive view of how a wound assessment moves from the bedside or home through WoundRounds, Wound Solutions AI and Clinical Wound Assessments into the record.', f"""
+    page('platform', 'How it fits together | WoundRounds, Wound Solutions AI and AssureStage Clinical Wound Assessments',
+         'An interactive view of how a wound assessment moves from the bedside or home through WoundRounds, Wound Solutions AI and AssureStage Clinical Wound Assessments into the record.', f"""
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">How it fits together</p>
@@ -572,7 +572,7 @@ def build():
     <ol class="steps">
       <li><div><h3>Capture: WoundRounds and WoundEye</h3><p>Nurses document photo, location, measurements and Braden risk at the bedside in WoundRounds, and those assessments go straight to specialist review. At home, patients and carers capture with WoundEye.</p></div></li>
       <li><div><h3>Worklist: Wound Solutions AI workflow agents</h3><p>For WoundEye, agents check each photo in, file it to the right body site, add it to the certified wound specialist’s worklist, track it until it is reviewed, and schedule follow-ups. They simplify, manage and scale the workflow, and make no clinical decisions.</p></div></li>
-      <li><div><h3>Clinical Wound Assessments</h3><p>Certified wound specialists review WoundRounds assessments and WoundEye submissions, determine type and stage, compute the PUSH score and flag suspected infection. The record shows who decided.</p></div></li>
+      <li><div><h3>AssureStage Clinical Wound Assessments</h3><p>Certified wound specialists review WoundRounds assessments and WoundEye submissions, determine type and stage, compute the PUSH score and flag suspected infection. The record shows who decided.</p></div></li>
       <li><div><h3>Act and record</h3><p>Flags and follow-ups reach the care team dashboard. The confirmed assessment becomes a defensible record, exports to the EHR or plan, and extends the healing trend.</p></div></li>
     </ol>
   </div>
@@ -745,7 +745,7 @@ def build():
   <div class="wrap">
     <div class="section-head"><h2>What sets Wound Solutions AI apart</h2><p class="lede">Four things a buyer gets in one contract.</p></div>
     <dl class="pillars pillars-4">
-      <div><dt>Specialists, not just software</dt><dd>Our Clinical Wound Assessment team of certified wound specialists reviews assessments and catches staging errors and gaps before they reach a survey or a claim.</dd></div>
+      <div><dt>Specialists, not just software</dt><dd>Our AssureStage Clinical Wound Assessment team of certified wound specialists reviews assessments and catches staging errors and gaps before they reach a survey or a claim.</dd></div>
       <div><dt>Bedside to home</dt><dd>WoundRounds serves skilled nursing, LTACH, rehabilitation and critical access hospitals. WoundEye lets patients and family carers send a photo from their own mobile device to the specialist worklist.</dd></div>
       <div><dt>Clinicians decide</dt><dd>Workflow agents handle intake, worklists, reminders and scheduling. Every clinical determination is made by a certified wound specialist, and the record shows who and when.</dd></div>
       <div><dt>Works with your EHR</dt><dd>WoundRounds integrates with long-term care EHRs including MatrixCare{fn(8)} and Cantata NetSolutions{fn(9)}, and WoundEye exports FHIR R4, JSON, CSV and PDF.</dd></div>
@@ -761,7 +761,7 @@ def build():
       <thead><tr><th scope="col"></th><th scope="col" class="us">Wound Solutions AI</th><th scope="col">Swift Medical</th><th scope="col">Net Health</th><th scope="col">PointClickCare Skin and Wound</th></tr></thead>
       <tbody>
         <tr><th scope="row">Wound photo, measurement and healing trend</th><td class="us"><b>Yes</b> &middot; WoundRounds and WoundEye</td><td>Yes{fn(3)}</td><td>Yes, Tissue Analytics{fn(4)}</td><td>Yes, powered by Swift Medical{fn(1)}</td></tr>
-        <tr><th scope="row">Certified wound specialist review from the same company</th><td class="us"><b>Yes, built in</b> &middot; Clinical Wound Assessments and Wound QA Services</td><td>Through a partnership with Corstrata, a separate company{fn(2)}</td><td>Not described; the product page covers software, analytics and patient engagement{fn(4)}</td><td>Not described on the product page{fn(1)}</td></tr>
+        <tr><th scope="row">Certified wound specialist review from the same company</th><td class="us"><b>Yes, built in</b> &middot; AssureStage Clinical Wound Assessments and documentation review</td><td>Through a partnership with Corstrata, a separate company{fn(2)}</td><td>Not described; the product page covers software, analytics and patient engagement{fn(4)}</td><td>Not described on the product page{fn(1)}</td></tr>
         <tr><th scope="row">Primary focus</th><td class="us"><b>Facility wound programs and prevention</b>, plus home capture for patients, carers and health plans</td><td>Wound imaging across home health, ambulatory, acute and skilled nursing{fn(3)}</td><td>Wound care EHR for outpatient centers and multi-facility organizations{fn(6)}</td><td>Wound documentation inside the PointClickCare EHR{fn(7)}</td></tr>
         <tr><th scope="row">Use with the EHR you already have</th><td class="us"><b>Yes</b> &middot; MatrixCare and Cantata integrations{fn(8)}{fn(9)}; FHIR R4 export</td><td>Yes, through EHR partners such as Homecare Homebase{fn(3)}</td><td>Yes, including PointClickCare{fn(5)}</td><td>Intended for PointClickCare EHR customers{fn(7)}</td></tr>
         <tr><th scope="row">Published LTACH outcome</th><td class="us"><b>78.95% fewer</b> full-thickness hospital-acquired pressure injuries, 236-bed LTACH, SAWC 2025</td><td colspan="3" class="muted">Each vendor publishes its own studies; see their websites.</td></tr>
@@ -793,7 +793,7 @@ def build():
     <h3>Where Wound Solutions AI is different</h3>
     <ul>
       <li><b>Made for the facility, not the clinic.</b> WoundRounds is built for nursing teams in skilled nursing and LTACH settings, where wound-related claims and survey citations concentrate.</li>
-      <li><b>Specialist oversight included.</b> Our Clinical Wound Assessment team reviews documentation, so facilities without a full-time wound nurse still get expert eyes on every wound.</li>
+      <li><b>Specialist oversight included.</b> Our AssureStage Clinical Wound Assessment team reviews documentation, so facilities without a full-time wound nurse still get expert eyes on every wound.</li>
       <li><b>Prevention, not only treatment.</b> Risk dashboards and daily review aim to stop facility-acquired wounds before they start.</li>
     </ul>
   </div>
@@ -898,7 +898,7 @@ def build():
 
     # ---------- SOLUTIONS
     page('solutions', 'Solutions | Wound Solutions AI',
-         'WoundRounds, WoundEye and Wound QA Services: AI tools and services for wound documentation, risk management and care team workflow.', '''
+         'WoundRounds, WoundEye and AssureStage: AI tools and services for wound documentation, risk management and care team workflow.', '''
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">Solutions</p>
@@ -927,15 +927,15 @@ def build():
 
 <section class="section paper" id="wound-qa">
   <div class="wrap article">
-    <h2>Wound QA Services</h2>
+    <h2 class="product-logo"><img src="assets/img/assurestage-logo.png" alt="AssureStage" width="1000" height="293"></h2>
     <aside class="note"><b>Who reviews.</b> Certified wound specialists on our clinical oversight team.</aside>
     <p class="lede">Expert review of wound documentation.</p>
     <p>Our certified wound specialists review assessments as they are recorded, catching staging errors, missing measurements and gaps before they reach a survey, a claim or a courtroom. For operators, it is a documented risk control an underwriter can credit.</p>
     <p><a class="sans" href="wound-liability.html"><b>Why documentation matters for liability</b></a></p>
   </div>
   <div class="wrap flow-wide mt-3">
-    <h3 class="flow-title">WoundRounds with Clinical Wound Assessments</h3>
-    <p class="flow-intro-text">Add our certified wound specialists, and every bedside assessment is reviewed before it reaches the record.</p>
+    <h3 class="flow-title">WoundRounds with AssureStage</h3>
+    <p class="flow-intro-text">Add AssureStage, our certified wound specialists, and every bedside assessment is reviewed before it reaches the record.</p>
     ''' + FLOW_WR + '''
   </div>
   <div class="wrap article mt-3">
@@ -1313,7 +1313,7 @@ def build():
     <p class="small">The full poster is available as a PDF. <a href="contact.html">Request a copy</a>.</p>
   </div>
 </section>
-''' + cta('Bring these results to your facility.', 'Talk to our clinical team about WoundRounds and Wound QA Services.'))
+''' + cta('Bring these results to your facility.', 'Talk to our clinical team about WoundRounds and AssureStage.'))
 
     # ---------- WOUNDS AND LIABILITY
     page('wound-liability', 'Wounds and liability in post-acute care | Wound Solutions AI',
@@ -1376,7 +1376,7 @@ def build():
       <li><b>The chart.</b> The largest awards turned on charts that did not match the resident. Timestamped expert review closes that gap.</li>
       <li><b>The submission.</b> A documented daily wound review is a concrete control to put in front of an underwriter.</li>
     </ul>
-    <div class="btn-row"><a class="btn btn-ink" href="solutions.html#wound-qa">About Wound QA Services</a></div>
+    <div class="btn-row"><a class="btn btn-ink" href="solutions.html#wound-qa">About AssureStage</a></div>
   </div>
 </section>
 
@@ -1399,7 +1399,7 @@ def build():
 
     # ---------- CONTACT
     page('contact', 'Contact | Request a demo | Wound Solutions AI',
-         'Request a demo of WoundRounds, WoundEye or Wound QA Services. Call +1 847.519.3500 or email information@woundsolutions.ai.', '''
+         'Request a demo of WoundRounds, WoundEye or AssureStage. Call +1 847.519.3500 or email information@woundsolutions.ai.', '''
 <section class="title-page compact">
   <div class="wrap">
     <p class="kicker">Contact</p>
@@ -1424,7 +1424,7 @@ def build():
           <option>WoundRounds for our facilities</option>
           <option>WoundEye for patients and carers</option>
           <option>WoundEye for our health plan</option>
-          <option>Wound QA Services</option>
+          <option>AssureStage</option>
           <option>Something else</option>
         </select>
       </div>
