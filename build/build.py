@@ -870,6 +870,7 @@ def build():
       <li><img class="headshot" src="assets/img/rhett-gustafson.webp" alt="Rhett Gustafson" loading="lazy"><span class="name">Rhett Gustafson</span><span class="role-title">Chief Financial Officer</span></li>
       <li><img class="headshot" src="assets/img/betty-czowiecki.webp" alt="Betty Czowiecki" loading="lazy"><span class="name">Betty Czowiecki</span><span class="role-title">Director of Delivery</span></li>
       <li><img class="headshot" src="assets/img/david-karr.webp" alt="David Karr" loading="lazy"><span class="name">David Karr</span><span class="role-title">Director of Product Development</span></li>
+      <li><img class="headshot in-color" src="assets/img/kara-stoughton.webp" alt="Kara Stoughton" loading="lazy"><span class="name">Kara Stoughton</span><span class="role-title">VP of Sales</span></li>
     </ul>
   </div>
 </section>

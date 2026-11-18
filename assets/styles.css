@@ -238,7 +238,7 @@ table.data td.num { font-variant-numeric: tabular-nums lining-nums; white-space:
 .pull { font-family: var(--serif); font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.3; font-style: italic; max-width: 34ch; margin: 0; padding-left: 1.25rem; border-left: 2px solid var(--ink); }
 
 /* Team */
-.team { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
+.team { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
 .team li { padding: 1.25rem 1rem 1.25rem 0; border-bottom: 1px solid var(--rule); }
 .team .name { font-family: var(--serif); font-size: 1.3rem; display: block; }
 .team .role-title { font-family: var(--sans); font-size: .9rem; color: var(--ink-2); }
@@ -528,3 +528,4 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .ceo-feature { margin: 0 0 2.5rem; }
 .ceo-feature img { aspect-ratio: 21/9; object-position: 50% 0; }
 @media (max-width: 760px) { .ceo-feature img { aspect-ratio: 4/3; } }
+.headshot.in-color { filter: none; }
