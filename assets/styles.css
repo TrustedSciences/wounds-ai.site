@@ -346,7 +346,8 @@ table.data td.num { font-variant-numeric: tabular-nums lining-nums; white-space:
 .flow .dim { opacity: .18; }
 .flow .edge-flow.dim { opacity: .05; }
 .flow .off { opacity: .04 !important; }
-.flow .loop-label { font: italic 13px var(--serif); fill: #E08A74; }
+.flow .loop-label { font: italic 600 15px var(--serif); fill: #F2A28C; }
+.flow .is-v .loop-label { font-size: 13.5px; }
 
 .flow .node { cursor: pointer; transition: opacity .3s; outline: none; }
 .flow .node .shape { fill: #1F2A3E; stroke: #6C7893; stroke-width: 1.2; transition: stroke .2s, fill .2s; }

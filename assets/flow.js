@@ -265,7 +265,14 @@ function initFlow(root) {
     }
     var ll = el('text', { 'class': 'loop-label', x: llx, y: lly, 'text-anchor': L.dir === 'h' ? 'middle' : 'start' }, svg);
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
-    ll.textContent = L.dir === 'h' ? 'Follow-up loop: wounds flagged for a second look come back for reassessment on the same timeline' : 'Follow-up loop: back for reassessment';
+    var core = variant === 'woundrounds-core';
+    var loopLines = L.dir === 'h'
+      ? (core ? ['If a wound needs a second look, the nurse can re-assess,', 're-stage or modify the MDS record in WoundRounds.']
+              : ['If the assessing nurse agrees with the AssureStage review,', 'the nurse can re-assess, re-stage or modify the MDS record in WoundRounds.'])
+      : ['Nurse can re-assess, re-stage or modify the MDS'];
+    loopLines.forEach(function (line, i) {
+      var ts = el('tspan', { x: llx, dy: i ? 19 : 0 }, ll); ts.textContent = line;
+    });
     ll.setAttribute('tabindex', 0); ll.setAttribute('role', 'button'); ll.classList.add('is-link');
     ll.addEventListener('click', function () { selectSection('loop'); });
     ll.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSection('loop'); } });
@@ -369,7 +376,9 @@ function initFlow(root) {
     return variant === 'woundrounds-core' ? 'Shared with' : 'Act and record';
   }
   var SECTION_NOTES = {
-    loop: 'When a wound is flagged for a second look, a follow-up is scheduled and the wound comes back to the bedside for another assessment. The new photo and measurements join the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.',
+    loop: variant === 'woundrounds-core'
+      ? 'If a wound needs a second look, the nurse can re-assess it, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.'
+      : 'If the assessing nurse agrees with the AssureStage review, the nurse can re-assess the wound, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.',
     out: variant === 'woundrounds-core'
       ? 'The wound record does not stay in one place. It feeds risk dashboards that show who needs attention first, QA and survey reports for the facility, the EHR and other systems the facility already uses, and the healing trend for each wound.'
       : 'Once a wound is assessed, the result goes where people act on it. The care team dashboard shows flags and follow-up dates; the defensible record keeps a dated history for surveys and liability review; the EHR export keeps other systems up to date; and the healing trend tracks each wound over time.'
