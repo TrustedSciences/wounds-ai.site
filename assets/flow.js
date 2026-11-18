@@ -115,14 +115,14 @@ function initFlow(root) {
   };
   var STAGES_WR = [
     { n: 0, title: 'The WoundRounds loop',
-      body: 'Nurses document at the bedside in WoundRounds, and each assessment goes straight to our AssureStage Clinical Wound Assessment team. Certified wound specialists review it, flag what needs attention and sign the record. The result reaches the care team dashboard, the defensible record, the EHR and the healing trend, and the next assessment joins the same wound\u2019s timeline.' },
+      body: 'Nurses document at the bedside in WoundRounds, and each high-risk assessment goes straight to our AssureStage Clinical Wound Assessment team. Certified wound specialists review these high-risk wounds and flag which wounds might need a second look. All final clinical decisions are made by the facility\u2019s clinical staff, not by AssureStage. The result reaches the care team dashboard, the defensible record, the EHR and the healing trend, and the next assessment joins the same wound\u2019s timeline.' },
     { n: 1, num: 1, title: 'Bedside documentation',
       body: 'Nurses in skilled nursing, LTACH, rehabilitation and critical access hospitals document at the bedside in WoundRounds: photo, location, measurements and Braden risk, in the facility\u2019s own workflow. Risk dashboards show each patient\u2019s drivers for potential harm.' },
     { n: 2 },
     { n: 3, num: 2, title: 'Clinical review',
-      body: 'Certified wound specialists on our AssureStage Clinical Wound Assessment team review WoundRounds assessments. They check staging and measurements, compute the PUSH score and screen for infection. A wound with suspected infection is flagged. The record shows who decided, and when.' },
+      body: 'High-risk WoundRounds assessments go to our AssureStage Clinical Wound Assessment team. Certified wound specialists review these high-risk wounds and flag which wounds might need a second look. All final clinical decisions are made by the facility\u2019s clinical staff, not by AssureStage.' },
     { n: 4, num: 3, title: 'Act and record',
-      body: 'The reviewed assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review, exports to the EHR, and adds a point to the wound\u2019s healing trend. Flagged wounds come back for follow-up, joining the same timeline.' }
+      body: 'The assessment reaches the care team dashboard as flags and follow-up dates. It becomes a dated, clinician-signed record ready for surveys and liability review, exports to the EHR, and adds a point to the wound\u2019s healing trend. Flagged wounds come back for follow-up, joining the same timeline.' }
   ];
   if (variant === 'woundrounds') STAGES = STAGES_WR;
 
@@ -326,7 +326,7 @@ function initFlow(root) {
     ehr: 'Structured export to the EHR or health plan: FHIR R4, JSON and CSV, signed webhooks, and PDF reports for the chart.',
     trend: 'Every follow-up photo lands on the same body site’s film strip, with the PUSH score, so direction is visible at a glance.'
   }
-  if (variant === 'woundrounds') NODE_NOTES.cwa = 'AssureStage: our certified wound specialists review each WoundRounds assessment, check staging and measurements, and flag suspected infection. Every final clinical decision is made by the facility\u2019s clinical staff.';;
+  if (variant === 'woundrounds') NODE_NOTES.cwa = 'AssureStage: high-risk WoundRounds assessments go to our certified wound specialists, who review these high-risk wounds and flag which wounds might need a second look. All final clinical decisions are made by the facility\u2019s clinical staff, not by AssureStage.';
 
   function selectStage(n) { S.stage = n; S.focus = null; applyFocus(); }
   function selectNode(id) { S.focus = (S.focus === id) ? null : id; S.stage = S.focus ? NODES[id].stage : S.stage; applyFocus(); }
