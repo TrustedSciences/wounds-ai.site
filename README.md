@@ -1,20 +1,30 @@
-# Wound Solutions AI vs Olio Health — comparison page
+# Compared with Olio Health — wounds-ai.com/compare-olio
 
-A single static page (`index.html`) comparing Wound Solutions AI with Olio Health,
-based on each vendor's public materials (reviewed November 2026). Each statement
-links to a numbered source at the bottom of the page.
+Static page comparing Wound Solutions AI with Olio Health, with the site's full
+header (including the **Compare** dropdown), breadcrumb and footer.
 
-## Use
+## Publish
 
-- **Open locally:** double-click `index.html`.
-- **GitHub Pages:** push this folder to a repository, then in
-  *Settings → Pages* choose the branch and the root folder. The page is served as-is.
-- **Add to an existing site:** copy the `<style>` block from `<head>` and the
-  contents of `<body>` into your page template.
+Put this `compare-olio` folder at the root of the site repository so the page is
+served at **https://wounds-ai.com/compare-olio**. No build step or dependencies.
+All menu links are absolute (`https://wounds-ai.com/...`), so the page also works
+on its own, e.g. on GitHub Pages.
 
-No build step or dependencies. Fonts (Source Serif 4, Nunito Sans) load from Google Fonts.
+## Add the link to the Compare menu on the other pages
 
-## Before publishing
+The live site's other pages don't know about this page yet. In the site's shared
+header, add this item to the **Compare** dropdown, after "Compared with PointClickCare":
 
-- Re-check the cited vendor pages; public materials change.
-- Olio figures are vendor-reported and cited as published.
+```html
+<li><a href="/compare-olio">Compared with Olio Health</a></li>
+```
+
+Match the markup/classes your existing menu items use. Optionally add the same link
+to the footer under "Compare platforms".
+
+## Notes
+
+- The logo is a text wordmark ("Wound Solutions AI"). Swap in your logo image tag
+  if you prefer.
+- Re-check the cited vendor pages before publishing; public materials change.
+  Olio figures are vendor-reported and cited as published.
