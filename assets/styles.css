@@ -456,6 +456,7 @@ table.cmp td.us, table.cmp th.us { background: var(--ink); color: var(--paper); 
 table.cmp td.us b { color: #E6CC93; }
 table.cmp td, table.cmp th { padding-right: 1rem; }
 table.cmp td.us sup.fn a { color: #E3A79C; }
+table.cmp td.us + td, table.cmp th.us + th { padding-left: 1.5rem; }
 
 /* Drop-down hover bridge: invisible strip covering the gap between button and panel */
 .drop-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -0.6rem; height: 0.6rem; }
