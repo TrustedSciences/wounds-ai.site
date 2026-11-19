@@ -431,7 +431,7 @@ def build():
   <div class="wrap">
     <div class="section-head" style="margin-bottom:2rem">
       <h2>One wound, one record, three layers of care</h2>
-      <p class="lede">WoundRounds captures the assessment at the bedside. WoundEye captures it at home, and our workflow agents put it on the specialist&rsquo;s worklist. Certified wound specialists make every clinical decision.</p>
+      <p class="lede">WoundRounds captures the assessment at the bedside. WoundEye captures it at home, and our workflow agents put it on the specialist&rsquo;s worklist. Certified wound specialists review every high-risk wound.</p>
     </div>
   </div>
   <div class="wrap flow-wide">
@@ -554,7 +554,7 @@ def build():
     <p class="kicker">How it fits together</p>
     <h1>One wound, one record, three layers of care</h1>
     <div class="abstract">
-      <p>WoundRounds captures the assessment at the bedside. WoundEye captures it at home, and Wound Solutions AI’s workflow agents put it on the specialist’s worklist. Our certified wound specialists make every clinical decision. Watch each assessment move through the loop, and select any stage to see what happens there.</p>
+      <p>WoundRounds captures the assessment at the bedside. WoundEye captures it at home, and Wound Solutions AI’s workflow agents put it on the specialist’s worklist. Our certified wound specialists review every high-risk wound. Watch each assessment move through the loop, and select any stage to see what happens there.</p>
     </div>
   </div>
 </section>
