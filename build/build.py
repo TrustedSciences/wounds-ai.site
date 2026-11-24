@@ -26,7 +26,7 @@ def header(active):
         return ' aria-current="page"' if p == active else ''
     drop_cur = ' current' if active in SOLUTION_PAGES - EVIDENCE_PAGES - {'compare'} else ''
     ev_cur = ' current' if active in EVIDENCE_PAGES else ''
-    cmp_cur = ' current' if active in ('compare', 'compare-olio') else ''
+    cmp_cur = ' current' if active == 'compare' else ''
     return f'''<a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap">
@@ -81,7 +81,6 @@ def header(active):
             <a href="compare.html#swift"><strong>Compared with Swift Medical</strong><span>Swift Skin &amp; Wound</span></a>
             <a href="compare.html#net-health"><strong>Compared with Net Health</strong><span>WoundExpert and Tissue Analytics</span></a>
             <a href="compare.html#pointclickcare"><strong>Compared with PointClickCare</strong><span>Skin and Wound</span></a>
-            <a href="compare-olio.html"{cur('compare-olio')}><strong>Compared with Olio Health</strong><span>Care coordination software</span></a>
             <a href="compare.html#checklist"><strong>Questions to ask any vendor</strong><span>A buyer&rsquo;s checklist for wound programs</span></a>
           </div>
         </div>
@@ -114,7 +113,6 @@ def footer():
           <li><a href="solutions.html#wound-qa">AssureStage</a></li>
           <li><a href="evidence.html">Evidence and studies</a></li>
           <li><a href="compare.html">Compare platforms</a></li>
-          <li><a href="compare-olio.html">Compared with Olio Health</a></li>
           <li><a href="pressure-ulcer-study.html">Pressure ulcer study</a></li>
         </ul>
       </div>
@@ -404,6 +402,48 @@ FLOW_WRN = """<div class="flow flow-wr" id="wsa-flow-wrn" data-flow data-variant
     <span><i class="l-ok"></i>Assessed by the facility nurse</span>
     <span><i class="l-flag"></i>Flagged for follow-up</span>
     <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>"""
+
+FLOW_MA = """<div class="flow flow-ma" id="wsa-flow-ma" data-flow data-variant="ma">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Both paths</button>
+      <button type="button" data-stage="1">1. Where it starts</button>
+      <button type="button" data-stage="2">2. First look</button>
+      <button type="button" data-stage="3">3. Assessment</button>
+      <button type="button" data-stage="4">4. Outcome</button>
+    </div>
+    <div class="flow-modes" role="group" aria-label="Path">
+      <button type="button" data-mode="late" aria-pressed="false">Seen late</button>
+      <button type="button" data-mode="early" aria-pressed="false">Seen same day</button>
+      <button type="button" data-mode="compare" aria-pressed="true">Compare</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>New wounds at home</div>
+        <div><b data-count="read">0</b>Unseen between visits</div>
+        <div class="flag"><b data-count="flagged">0</b>Reached care as a costly episode</div>
+        <div><b data-count="confirmed">0</b>Assessed by a clinician the same day</div>
+        <div><b data-count="record">0</b>In the plan&rsquo;s record</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate-ma">New wounds per day</label><b data-rate-out>60</b></div>
+        <input id="flow-rate-ma" type="range" min="10" max="5000" step="10" value="60" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>A new wound at home</span>
+    <span><i class="l-wait"></i>Waiting, unseen</span>
+    <span><i class="l-flag"></i>Seen late, larger and harder to treat</span>
+    <span><i class="l-ok"></i>Assessed by a licensed clinician the same day</span>
+    <span class="flow-foot">Illustrative simulation: each wound is shown on both paths. Figures from the WoundEye brochure. Select a stage or any box to read about it.</span>
   </div>
 </div>"""
 
@@ -848,85 +888,6 @@ def build():
 </section>
 """ + cta('See the difference with your own wounds.', 'A short demonstration of WoundRounds, WoundEye and our clinical review team.'))
 
-    # ---------- COMPARE: OLIO HEALTH
-    page('compare-olio', 'Compared with Olio Health | Wound Solutions AI',
-         'How Wound Solutions AI compares with Olio Health: a site-precise, longitudinal wound record with certified wound specialist review, alongside care coordination software.', f"""
-<section class="title-page compact">
-  <div class="wrap">
-    <p class="kicker"><a href="compare.html">Compare</a> &middot; Olio Health</p>
-    <h1>Olio moves the patient. We follow the wound.</h1>
-    <div class="abstract">
-      <p>Olio is care coordination software. It manages referrals, census, admissions and transitions between post-acute providers and health plans.{fn(1)}{fn(2)} Wound Solutions AI documents, reviews and tracks the wound itself, from the facility bedside to the patient&rsquo;s home.{fn(4)}{fn(5)} Olio&rsquo;s materials do not describe wound documentation, wound imaging or wound specialist review.{fn(1)}{fn(2)}{fn(3)}</p>
-    </div>
-    <ul class="ev-jump">
-      <li><a href="#side-by-side">Side by side</a></li>
-      <li><a href="#what-sets-us-apart">Precise and continuous</a></li>
-      <li><a href="#together">Already using Olio?</a></li>
-      <li><a href="#sources">Sources</a></li>
-    </ul>
-  </div>
-</section>
-
-<section class="section paper" id="side-by-side">
-  <div class="wrap">
-    <div class="section-head"><h2>Side by side</h2><p class="lede">Based on each vendor&rsquo;s own public materials. Select a source number to see where each statement comes from.</p></div>
-    <div class="table-scroll">
-    <table class="data cmp">
-      <thead><tr><th scope="col"></th><th scope="col" class="us">Wound Solutions AI</th><th scope="col">Olio Health</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">Primary focus</th><td class="us"><b>Wound care and prevention</b> across facilities, plus home capture for patients, carers and health plans{fn(4)}</td><td>Care coordination for SNFs, payers and provider groups: admissions, census, referrals and transitions{fn(1)}{fn(2)}</td></tr>
-        <tr><th scope="row">Wound photo, measurement and healing trend</th><td class="us"><b>Yes</b> &middot; WoundRounds records photo, location, measurements and Braden risk at the bedside; WoundEye adds home photos{fn(5)}</td><td>Not described; product pages cover referrals, census, post-discharge tracking and analytics{fn(1)}{fn(2)}</td></tr>
-        <tr><th scope="row">Site-precise, longitudinal wound record</th><td class="us"><b>Yes</b> &middot; Body region, then an exact spot on a close-up view. Later photos file to the same site, with a film strip, PUSH Tool 3.0 score and follow-up dates{fn(6)}</td><td>Tracks the patient across levels of care (start of care, refusals, 30-day readmissions); no wound-level record described{fn(2)}{fn(3)}</td></tr>
-        <tr><th scope="row">Certified wound specialist review</th><td class="us"><b>Yes, built in</b> &middot; AssureStage specialists determine type and stage, compute PUSH and flag suspected infection{fn(5)}</td><td>Not described. AI summarizes referral and clinical documents, with citations back to the source PDF{fn(2)}{fn(3)}</td></tr>
-        <tr><th scope="row">Who makes the clinical call</th><td class="us"><b>A certified wound specialist</b>, and the record shows who and when. Workflow agents make no clinical decisions{fn(5)}</td><td>AI rates each inbound referral red, yellow or green against facility admission criteria for the admissions team{fn(2)}</td></tr>
-        <tr><th scope="row">Patient and family capture after discharge</th><td class="us"><b>Yes</b> &middot; WoundEye on any mobile device, with a clinician&rsquo;s answer the same day{fn(6)}</td><td>Visibility comes through home health and hospice partners; no patient-facing capture described{fn(1)}{fn(2)}</td></tr>
-        <tr><th scope="row">Health plans</th><td class="us"><b>WoundEye for health plans</b> for Medicare Advantage care management</td><td>Member tracking across levels of care and concurrent review summaries for UM teams{fn(3)}</td></tr>
-        <tr><th scope="row">EHR and data</th><td class="us"><b>Yes</b> &middot; PointClickCare, MatrixCare and Cantata integrations{fn(9)}{fn(7)}{fn(8)}; FHIR R4, JSON, CSV and PDF export, a keyed API and signed webhooks{fn(6)}</td><td>PointClickCare and MatrixCare census and document feeds; TEFCA records through Kno2{fn(2)}</td></tr>
-        <tr><th scope="row">Published wound outcome</th><td class="us"><b>78.95% fewer</b> full-thickness hospital-acquired pressure injuries, 236-bed LTACH, SAWC 2025; <b>80%+ fewer</b> facility-acquired pressure ulcers in seven months{fn(4)}</td><td>None published. Reported results are operational, such as a 25% lift in admissions and 96% provider satisfaction{fn(2)}</td></tr>
-      </tbody>
-    </table>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="what-sets-us-apart">
-  <div class="wrap">
-    <div class="section-head"><h2>Precise at the site. Continuous over time.</h2><p class="lede">What a wound program gets from Wound Solutions AI that a coordination platform does not set out to provide.</p></div>
-    <dl class="pillars pillars-4">
-      <div><dt>Pinned to the exact site</dt><dd>Every photo is tied to a body region and a precise spot on a close-up view, so a heel wound is never confused with the one beside it.</dd></div>
-      <div><dt>A record that follows the wound</dt><dd>Each site keeps its own film strip, PUSH Tool 3.0 score and follow-up dates, and every confirmed assessment extends the healing trend.</dd></div>
-      <div><dt>Specialists confirm every result</dt><dd>Certified wound specialists stage, score and flag. WoundAI is decision support, and the record shows who decided and when.</dd></div>
-      <div><dt>Bedside and home, one trend</dt><dd>Nurses capture in WoundRounds; patients and carers capture in WoundEye. Both land on the same specialist worklist.</dd></div>
-    </dl>
-  </div>
-</section>
-
-<section class="section paper" id="together">
-  <div class="wrap article">
-    <h2>Already using Olio?</h2>
-    <p>The two cover different needs and can run side by side: Olio moves the patient between settings, and Wound Solutions AI keeps the wound record continuous as they go.</p>
-  </div>
-</section>
-
-<section class="section" id="sources" style="border-bottom:0">
-  <div class="wrap">
-    <h2 style="font-size:1.4rem">Sources</h2>
-    <ol class="references mt-1">
-      <li id="src-1"><a href="https://www.olio.health/"{EXT}>Olio Health, home page</a></li>
-      <li id="src-2"><a href="https://www.olio.health/for-skilled-nursing-facilities"{EXT}>Olio Health, for skilled nursing facilities</a></li>
-      <li id="src-3"><a href="https://www.olio.health/for-payers"{EXT}>Olio Health, for payers</a></li>
-      <li id="src-4"><a href="index.html">Wound Solutions AI, home page</a></li>
-      <li id="src-5"><a href="platform.html">Wound Solutions AI, how it fits together</a></li>
-      <li id="src-6"><a href="woundeye.html">WoundEye</a></li>
-      <li id="src-7"><a href="{S['mc']}"{EXT}>MatrixCare Partner Marketplace, WoundRounds listing</a></li>
-      <li id="src-8"><a href="{S['cantata']}"{EXT}>Cantata Health, data-informed wound care with WoundRounds</a></li>
-      <li id="src-9"><a href="https://www.woundrounds.com/?p=4039"{EXT}>WoundRounds joins PointClickCare Partner Network</a></li>
-    </ol>
-    <p class="small mt-2" style="max-width:56rem">Comparison based on each company&rsquo;s publicly available materials as of November 2026. Olio figures are vendor-reported and cited as published. Features change; confirm current capabilities with each vendor. Olio is a trademark of its owner, which does not endorse this comparison.</p>
-  </div>
-</section>
-""" + cta('See the wound record that follows the patient.', 'A short demonstration of WoundRounds, WoundEye and our clinical review team.'))
-
     # ---------- ABOUT
     page('about', 'Who we are | Wound Solutions AI',
          'Wound Solutions AI is a fast-growing health technology company improving patient care with data-driven wound management.', '''
@@ -1215,6 +1176,14 @@ def build():
   </div>
 </section>
 
+<section class="section paper" id="two-paths">
+  <div class="wrap flow-wide">
+    <h2 class="flow-title">Two paths for the same wound</h2>
+    <p class="flow-intro-text">Every wound below starts the same way, small and at home. Watch it travel the usual path, where nobody clinical sees it until it becomes an episode, and the WoundEye path, where a licensed clinician sees it the same day.</p>
+    {FLOW_MA}
+  </div>
+</section>
+
 <section class="section paper">
   <div class="wrap article">
     <h2>The first person to see a wound is usually someone at home</h2>
@@ -1341,6 +1310,7 @@ def build():
     <p class="small mt-2">WoundEye is an application that connects members with a licensed wound-care clinician. The app itself does not diagnose, treat, cure or prevent disease; every assessment is made by the reviewing clinician. WoundEye is a product of Wound Solutions AI LLC.</p>
   </div>
 </section>
+"<script src="assets/flow.js"></script>
 """)
 
     # ---------- PRESSURE ULCER STUDY

@@ -30,6 +30,16 @@ function initFlow(root) {
     mds:   { label: 'Wound record', sub: 'Updates the MDS', stage: 3, kind: 'prod' },
     risk:  { label: 'Risk dashboards', sub: 'Braden drivers, alerts', stage: 4, kind: 'out' },
     qa:    { label: 'QA and survey reports', sub: 'Facility risk summary', stage: 4, kind: 'out' },
+    mhome: { label: 'Small wound at home', stage: 1, kind: 'src', lane: 'both' },
+    late1: { label: 'Nobody clinical sees it', sub: '46% get no visit in 14 days', stage: 2, kind: 'late', lane: 'late' },
+    late2: { label: 'Reaches a clinic late', sub: 'Larger, harder to treat', stage: 3, kind: 'late', lane: 'late' },
+    late3: { label: 'The costly episode', sub: 'Admission or surgery', stage: 4, kind: 'late', lane: 'late', big: true },
+    weh:   { label: 'WoundEye', sub: 'Photo on their own phone', stage: 2, kind: 'prod', lane: 'early' },
+    clin:  { label: 'Licensed clinician', sub: 'Assessment the same day', sub2: 'Signs off, sets follow-up', stage: 3, kind: 'prod', lane: 'early' },
+    ans:   { label: 'Member answer', sub: 'Plain language, same day', stage: 4, kind: 'out', lane: 'early' },
+    cm:    { label: 'Care manager view', sub: 'Photo timeline, trend line', stage: 4, kind: 'out', lane: 'early' },
+    exp:   { label: 'Plan systems', sub: 'FHIR R4, JSON, CSV, API', stage: 4, kind: 'out', lane: 'early' },
+    aud:   { label: 'Signed record', sub: 'Audit trail on every case', stage: 4, kind: 'out', lane: 'early' },
     ehr2:  { label: 'EHR and other systems', sub: 'Facility EHR and more', stage: 4, kind: 'out' }
   };
 
@@ -51,7 +61,9 @@ function initFlow(root) {
     ['wr', 'cwa'], ['we', 'ai'], ['ai', 'cwa'],
     ['cwa', 'dash'], ['cwa', 'rec'], ['cwa', 'ehr'], ['cwa', 'trend'],
     ['snf', 'wrn'], ['ltach', 'wrn'], ['rehab', 'wrn'], ['cah', 'wrn'], ['wrn', 'mds'],
-    ['mds', 'risk'], ['mds', 'qa'], ['mds', 'ehr2'], ['mds', 'trend']
+    ['mds', 'risk'], ['mds', 'qa'], ['mds', 'ehr2'], ['mds', 'trend'],
+    ['mhome', 'late1'], ['late1', 'late2'], ['late2', 'late3'],
+    ['mhome', 'weh'], ['weh', 'clin'], ['clin', 'ans'], ['clin', 'cm'], ['clin', 'exp'], ['clin', 'aud']
   ];
 
   // ---------------------------------------------------------------- layouts
@@ -155,8 +167,42 @@ function initFlow(root) {
   ];
   if (variant === 'woundrounds-core') STAGES = STAGES_WRN;
 
+  // Medicare Advantage variant (health plans page): the same wound on two paths, seen late or seen the same day
+  var LAYOUTS_MA = {
+    h: { W: 1200, H: 640, dir: 'h',
+      caps: [[105, 'Where the wound starts'], [390, 'First look'], [690, 'Assessment'], [1060, 'Outcome']],
+      laneLabels: [[600, 52, 'Seen late: the usual path', 'late'], [600, 300, 'Seen the same day: with WoundEye', 'early']],
+      pos: {
+        mhome: [105, 300, 170, 52],
+        late1: [390, 130, 230, 64], late2: [690, 130, 230, 64], late3: [1060, 130, 236, 72],
+        weh: [390, 430, 210, 80], clin: [690, 430, 220, 92],
+        ans: [1060, 336, 210, 54], cm: [1060, 410, 210, 54], exp: [1060, 484, 210, 54], aud: [1060, 558, 210, 54]
+      } },
+    v: { W: 400, H: 860, dir: 'v',
+      laneLabels: [[100, 128, 'Seen late', 'late'], [300, 128, 'Same day', 'early']],
+      pos: {
+        mhome: [200, 50, 230, 46],
+        late1: [100, 190, 184, 60], late2: [100, 330, 184, 60], late3: [100, 470, 184, 66],
+        weh: [300, 190, 184, 70], clin: [300, 330, 184, 84],
+        ans: [300, 560, 184, 52], cm: [300, 632, 184, 52], exp: [300, 704, 184, 52], aud: [300, 776, 184, 52]
+      } }
+  };
+  var STAGES_MA = [
+    { n: 0, title: 'Two paths for the same wound',
+      body: 'A pressure injury on a heel or an ulcer on a diabetic foot starts small, at home. On the usual path, nobody clinical sees it until it reaches a clinic, often as an admission, a surgery or an amputation. With WoundEye, the member or caregiver photographs it on their own phone and a licensed wound-care clinician assesses it the same day, while it is still small.' },
+    { n: 1, num: 1, title: 'Where the wound starts',
+      body: '10.5 million Medicare beneficiaries have a wound. Between visits, the only people who see it are whoever is at home: a spouse, a daughter, a home-health aide.' },
+    { n: 2, num: 2, title: 'First look',
+      body: 'On the usual path, the first look waits: 46% of Medicare patients discharged to home health get no home health visit within 14 days. With WoundEye, the first look happens at home: a guided photo on any mobile device, two taps on a body map and a few plain questions. No clinic visit, no special camera, no kit.' },
+    { n: 3, num: 3, title: 'Assessment',
+      body: 'On the usual path, the wound reaches a clinic once it is larger and harder to treat. With WoundEye, a licensed wound-care clinician reviews the photograph, writes the assessment and sets the follow-up. The record shows who decided. The app itself does not diagnose or treat.' },
+    { n: 4, num: 4, title: 'Outcome',
+      body: 'Late wounds become the episodes every plan knows: an admission, a surgery, sometimes an amputation. A diabetic foot ulcer adds $11,710 a year in health care costs for a Medicare patient. With WoundEye, the member gets a plain-language answer the same day, and the plan gets a clinician-signed record, a photo timeline and structured exports.' }
+  ];
+  if (variant === 'ma') STAGES = STAGES_MA;
+
   // ---------------------------------------------------------------- state
-  var S = { L: null, mode: variant === 'woundeye' ? 'home' : (variant === 'woundrounds' || variant === 'woundrounds-core') ? 'fac' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
+  var S = { L: null, mode: variant === 'woundeye' ? 'home' : (variant === 'woundrounds' || variant === 'woundrounds-core') ? 'fac' : variant === 'ma' ? 'compare' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
             counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
   var svg, gEdges, gFlow, gNodes, gParts, paths = {}, nodeEls = {}, particles = [], pool = [];
   var spawnAcc = 0, last = 0;
@@ -212,7 +258,7 @@ function initFlow(root) {
   // ---------------------------------------------------------------- build
   function build() {
     var wide = root.clientWidth >= 760;
-    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : variant === 'woundrounds-core' ? LAYOUTS_WRN : LAYOUTS)[wide ? 'h' : 'v'];
+    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : variant === 'woundrounds-core' ? LAYOUTS_WRN : variant === 'ma' ? LAYOUTS_MA : LAYOUTS)[wide ? 'h' : 'v'];
     if (S.L === L && svg) return;
     S.L = L;
     stage.innerHTML = '';
@@ -289,6 +335,10 @@ function initFlow(root) {
       og.addEventListener('click', function () { selectSection('out'); });
       og.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSection('out'); } });
     }
+    if (L.laneLabels) L.laneLabels.forEach(function (ll2) {
+      var tl = el('text', { 'class': 'lane-label lane-' + ll2[3], x: ll2[0], y: ll2[1], 'text-anchor': 'middle', 'data-lane': ll2[3] }, svg);
+      tl.textContent = ll2[2];
+    });
     gNodes = el('g', {}, svg);
     Object.keys(NODES).forEach(function (id) { if (L.pos[id]) drawNode(id); });
 
@@ -344,9 +394,20 @@ function initFlow(root) {
     wr:  { src: 'assets/img/woundrounds-logo.png', ar: 387 / 52 },
     wrn: { src: 'assets/img/woundrounds-logo.png', ar: 387 / 52 },
     we:  { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
+    weh: { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
     cwa: { src: 'assets/img/assurestage-logo.png', ar: 1000 / 293, tall: true }
   };
   var NODE_NOTES = {
+    mhome: 'A pressure injury on a heel, or an ulcer on the sole of a diabetic foot, does not announce itself. It starts small, at home, and the people around it are family and home-health aides.',
+    late1: 'Between visits, nobody clinical looks at the wound. 46% of Medicare patients discharged to home health get no home health visit within 14 days (JAMA Network Open, 2020).',
+    late2: 'By the time the wound reaches a clinic, it is often larger and harder to treat. The expensive part of wound care is almost always the late part.',
+    late3: 'The episode every plan knows: an admission, a surgery, sometimes an amputation. Medicare spent as much as $67 billion on wound care in 2019, and there are about 150,000 non-traumatic leg amputations in the US each year, most in people with diabetes.',
+    weh: 'The member or caregiver photographs the wound on whatever mobile device they already own, marks the spot on a body map and answers a few plain questions.',
+    clin: 'A licensed wound-care clinician reviews the photograph, writes the assessment and sets the follow-up. That assessment becomes the record, and the record shows who decided. The app itself does not diagnose or treat.',
+    ans: 'The member gets an answer in plain language the same day, while the wound is still small enough to be cheap.',
+    cm: 'The care manager sees the same record, with a photo timeline, a trend line and the clinician\u2019s note when a wound is getting worse.',
+    exp: 'Structured export in FHIR R4, JSON and CSV, a pull API with signed webhooks, and PDF reports ready for the chart.',
+    aud: 'Every assessment carries a licensed clinician\u2019s sign-off and an audit trail written by the database itself.',
     wrn: 'The WoundRounds mobile app at the bedside. The nurse photographs the wound and completes the assessment: location, measurements, wound bed, Braden risk and treatment.',
     mds: 'The nurse\u2019s assessment updates the resident\u2019s wound record in WoundRounds, the wound-dedicated EHR, and supports the wound items in the MDS.',
     risk: 'Dashboards that show each patient\u2019s risk drivers for potential harm, so the team knows who needs attention first. Flagged wounds come back for follow-up.',
@@ -373,19 +434,21 @@ function initFlow(root) {
   function selectSection(k) { S.focus = null; S.section = (S.section === k) ? null : k; applyFocus(); }
   function sectionTitle(k) {
     if (k === 'loop') return 'Follow-up loop';
-    return variant === 'woundrounds-core' ? 'Shared with' : 'Act and record';
+    return variant === 'woundrounds-core' ? 'Shared with' : variant === 'ma' ? 'What the plan gets' : 'Act and record';
   }
   var SECTION_NOTES = {
     loop: variant === 'woundrounds-core'
       ? 'If a wound needs a second look, the nurse can re-assess it, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.'
       : 'If the assessing nurse agrees with the AssureStage review, the nurse can re-assess the wound, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.',
-    out: variant === 'woundrounds-core'
+    out: variant === 'ma'
+      ? 'Every WoundEye assessment carries a licensed clinician\u2019s sign-off and an audit trail written by the database. The care manager sees the same record as the member, with a photo timeline and a trend line. Structured exports in FHIR R4, JSON and CSV, a pull API with signed webhooks and chart-ready PDF reports connect it to the systems the plan already runs. Pricing is per member per month, scaled to the size of the plan.'
+      : variant === 'woundrounds-core'
       ? 'The wound record does not stay in one place. It feeds risk dashboards that show who needs attention first, QA and survey reports for the facility, the EHR and other systems the facility already uses, and the healing trend for each wound.'
       : 'Once a wound is assessed, the result goes where people act on it. The care team dashboard shows flags and follow-up dates; the defensible record keeps a dated history for surveys and liability review; the EHR export keeps other systems up to date; and the healing trend tracks each wound over time.'
   };
 
   var FAC = ['snf', 'ltach', 'rehab', 'cah', 'wr'];
-  function offMode(id) { return (S.mode === 'fac' && NODES[id].home) || (S.mode === 'home' && FAC.indexOf(id) > -1); }
+  function offMode(id) { if (variant === 'ma') return (S.mode === 'late' && NODES[id].lane === 'early') || (S.mode === 'early' && NODES[id].lane === 'late'); return (S.mode === 'fac' && NODES[id].home) || (S.mode === 'home' && FAC.indexOf(id) > -1); }
 
   function applyFocus() {
     var st = S.stage, f = S.focus, sec = S.section;
@@ -413,6 +476,7 @@ function initFlow(root) {
     var s = STAGES[st];
     var head = f ? (NODES[f].label + (NODES[f].label2 ? ' ' + NODES[f].label2 : '')) : sec ? sectionTitle(sec) : (st ? (s.num || st) + '. ' + s.title : s.title);
     var body = f ? NODE_NOTES[f] : sec ? SECTION_NOTES[sec] : s.body;
+    svg.querySelectorAll('.lane-label').forEach(function (t) { var ln = t.getAttribute('data-lane'); t.classList.toggle('dim', (S.mode === 'late' && ln === 'early') || (S.mode === 'early' && ln === 'late')); });
     var lbl = svg.querySelector('.loop-label'); if (lbl) lbl.classList.toggle('active', sec === 'loop');
     var ogr = svg.querySelector('.out-group'); if (ogr) ogr.classList.toggle('active', sec === 'out');
     panel.querySelector('.panel-title').textContent = head;
@@ -422,7 +486,23 @@ function initFlow(root) {
   // ---------------------------------------------------------------- particles
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+  function spawnMA() {
+    var flag = false, made = [];
+    var lanes = S.mode === 'late' ? ['late'] : S.mode === 'early' ? ['early'] : ['late', 'early'];
+    lanes.forEach(function (lane) {
+      var route = lane === 'late' ? ['mhome-late1', 'late1-late2', 'late2-late3'] : ['mhome-weh', 'weh-clin', pick(['clin-ans', 'clin-ans', 'clin-cm', 'clin-exp', 'clin-aud'])];
+      route = route.filter(function (id) { return paths[id]; });
+      var c = pool.pop() || el('circle', {}, gParts);
+      c.setAttribute('r', S.L.dir === 'h' ? 5 : 5.5); c.style.display = '';
+      setState(c, 'raw');
+      var pp = { el: c, route: route, i: 0, d: 0, late: lane === 'late', speed: lane === 'late' ? 95 + Math.random() * 30 : 165 + Math.random() * 50 };
+      particles.push(pp); made.push(pp);
+    });
+    S.counts.captured++;
+    return made;
+  }
   function spawn() {
+    if (variant === 'ma') { spawnMA(); return; }
     var home = S.mode === 'home' || (S.mode === 'both' && Math.random() < 0.28);
     var route = home ? ['home-we', 'we-ai', 'ai-cwa'] : [pick(['snf', 'snf', 'ltach', 'rehab', 'cah']) + '-wr', 'wr-cwa'];
     var flag = Math.random() < 0.12;
@@ -434,7 +514,8 @@ function initFlow(root) {
     else if (flag) { route.push('cwa-dash'); if (!home) route.push('loop'); }
     else route.push(pick(['cwa-dash', 'cwa-rec', 'cwa-rec', 'cwa-ehr', 'cwa-trend']));
     route = route.filter(function (id) { return paths[id]; });
-    var c = pool.pop() || el('circle', { r: S.L.dir === 'h' ? 5 : 5.5 }, gParts);
+    var c = pool.pop() || el('circle', {}, gParts);
+    c.setAttribute('r', S.L.dir === 'h' ? 5 : 5.5);
     c.style.display = '';
     setState(c, 'raw');
     particles.push({ el: c, route: route, i: 0, d: 0, flag: flag, home: home, speed: 150 + Math.random() * 60 });
@@ -456,6 +537,14 @@ function initFlow(root) {
     var to = paths[edgeId].b;
     var n = nodeEls[to];
     if (n && !reduce && !p.virtual) { n.classList.remove('ping'); void n.getBBox(); n.classList.add('ping'); }
+    if (variant === 'ma') {
+      var base = S.L.dir === 'h' ? 5 : 5.5;
+      if (to === 'late1') { setState(p.el, 'wait'); p.el.setAttribute('r', base + 1.5); if (!p.seed) S.counts.read++; }
+      if (to === 'late2') { setState(p.el, 'flag'); p.el.setAttribute('r', base + 3.5); }
+      if (to === 'late3') { p.el.setAttribute('r', base + 6); if (!p.seed) S.counts.flagged++; }
+      if (to === 'clin') { setState(p.el, 'ok'); if (!p.seed) S.counts.confirmed++; }
+      return;
+    }
     if (to === 'ai') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }
     if (to === 'mds') { setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; } }
     if (to === 'cwa' && !p.isResult) {
@@ -467,6 +556,14 @@ function initFlow(root) {
   // Above this many moving dots, extra assessments are counted without being drawn, so high rates stay smooth.
   var MAX_DOTS = 140;
   function spawnVirtual() {
+    if (variant === 'ma') {
+      spawnMA().forEach(function (p) {
+        particles.splice(particles.indexOf(p), 1); p.el.style.display = 'none'; pool.push(p.el); p.virtual = true;
+        for (var i = 0; i < p.route.length; i++) arrive(p, p.route[i]);
+        if (!p.late) S.counts.record++;
+      });
+      return;
+    }
     spawn();
     var p = particles.pop(); p.el.style.display = 'none'; pool.push(p.el); p.virtual = true;
     for (var i = 0; i < p.route.length; i++) arrive(p, p.route[i]);
@@ -484,7 +581,7 @@ function initFlow(root) {
         if (p.d >= e.len) {
           arrive(p, p.route[p.i]);
           p.d -= e.len; p.i++;
-          if (p.i >= p.route.length) { if (!p.seed) { if (p.isResult) S.counts.results++; else S.counts.record++; } p.el.style.display = 'none'; pool.push(p.el); particles.splice(k, 1); continue; }
+          if (p.i >= p.route.length) { if (!p.seed && !p.late) { if (p.isResult) S.counts.results++; else S.counts.record++; } p.el.style.display = 'none'; pool.push(p.el); particles.splice(k, 1); continue; }
           e = paths[p.route[p.i]];
         }
         var pt = e.el.getPointAtLength(Math.min(p.d, e.len));
@@ -565,7 +662,8 @@ function initFlow(root) {
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
   build(); syncPlay(); renderCounts();
   // seed a few dots so a paused / reduced-motion view still shows the flow
-  for (var i = 0; i < 18; i++) { spawn(); var p = particles[particles.length - 1]; p.seed = true; p.i = Math.floor(Math.random() * (p.route.length)); p.d = Math.random() * paths[p.route[p.i]].len;
+  if (variant === 'ma') { for (var j = 0; j < 8; j++) spawnMA().forEach(function (p) { p.seed = true; p.i = Math.floor(Math.random() * p.route.length); p.d = Math.random() * paths[p.route[p.i]].len; for (var q = 0; q < p.i; q++) arrive(p, p.route[q]); var pt = paths[p.route[p.i]].el.getPointAtLength(p.d); p.el.setAttribute('cx', pt.x); p.el.setAttribute('cy', pt.y); }); }
+  else for (var i = 0; i < 18; i++) { spawn(); var p = particles[particles.length - 1]; p.seed = true; p.i = Math.floor(Math.random() * (p.route.length)); p.d = Math.random() * paths[p.route[p.i]].len;
     var atCwa = p.route.indexOf('ai-cwa') > -1 ? 3 : 2; if (p.i >= 2 && atCwa === 3) setState(p.el, 'read'); if (p.i >= atCwa) setState(p.el, p.flag ? 'flag' : 'ok');
     var pt = paths[p.route[p.i]].el.getPointAtLength(p.d); p.el.setAttribute('cx', pt.x); p.el.setAttribute('cy', pt.y); }
   S.counts = { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }; renderCounts();

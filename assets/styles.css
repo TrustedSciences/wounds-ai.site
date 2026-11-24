@@ -551,3 +551,14 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .flow-clock .clock-day { font-size: .8rem; color: #A9A293; }
 .flow-clock .clock-time { font-family: var(--serif); font-weight: 400; font-size: 1.45rem; color: #F7F2E8; font-variant-numeric: tabular-nums; }
 .flow-clock .clock-note { font-size: .75rem; color: #A9A293; }
+.flow .node-late .shape { fill: rgba(224,138,116,.07); stroke: #B9705F; stroke-dasharray: 5 4; }
+.flow .node-late .n-label { fill: #F2C9BC; font-size: 17px; }
+.flow .node-late .n-sub { fill: #C7A49A; }
+.flow .lane-label { font: italic 600 15px var(--serif); transition: opacity .3s; }
+.flow .lane-label.lane-late { fill: #F2A28C; }
+.flow .lane-label.lane-early { fill: #8FD3C6; }
+.flow .lane-label.dim { opacity: .2; }
+.flow .is-v .lane-label { font-size: 13px; }
+.flow .pt-wait { fill: #6E5A4F; stroke: #E08A74; stroke-width: 1.4; }
+.flow-legend .l-wait { background: #6E5A4F; box-shadow: 0 0 0 1.5px #E08A74; }
+.flow-ma .flow-counts { grid-template-columns: repeat(2, minmax(0,1fr)); }
