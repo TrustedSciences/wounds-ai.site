@@ -456,7 +456,6 @@ table.cmp td.us, table.cmp th.us { background: var(--ink); color: var(--paper); 
 table.cmp td.us b { color: #E6CC93; }
 table.cmp td, table.cmp th { padding-right: 1rem; }
 table.cmp td.us sup.fn a { color: #E3A79C; }
-table.cmp td.us + td, table.cmp th.us + th { padding-left: 1.5rem; }
 
 /* Drop-down hover bridge: invisible strip covering the gap between button and panel */
 .drop-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -0.6rem; height: 0.6rem; }
@@ -540,3 +539,15 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .flow .loop-label.is-link { cursor: pointer; text-decoration: underline; text-decoration-color: rgba(224,138,116,.5); text-underline-offset: 3px; }
 .flow .loop-label.is-link:hover, .flow .loop-label.active { fill: #F2B3A2; }
 .flow .loop-label:focus-visible { outline: none; fill: #F7F2E8; }
+.flow-clock { display: flex; align-items: center; gap: .85rem; margin-bottom: 1rem; }
+.flow-clock .clock-face { width: 64px; height: 64px; flex: none; }
+.flow-clock .cf-rim { fill: #F7F2E8; stroke: #C9A45C; stroke-width: 2.5; }
+.flow-clock .cf-tick { stroke: #8A8475; stroke-width: 1; }
+.flow-clock .cf-tick.big { stroke: #1B2433; stroke-width: 2.2; }
+.flow-clock .cf-hour { stroke: #1B2433; stroke-width: 5; stroke-linecap: round; }
+.flow-clock .cf-min { stroke: #A8823E; stroke-width: 2.6; stroke-linecap: round; }
+.flow-clock .cf-pin { fill: #1B2433; }
+.flow-clock .clock-text { display: flex; flex-direction: column; line-height: 1.25; }
+.flow-clock .clock-day { font-size: .8rem; color: #A9A293; }
+.flow-clock .clock-time { font-family: var(--serif); font-weight: 400; font-size: 1.45rem; color: #F7F2E8; font-variant-numeric: tabular-nums; }
+.flow-clock .clock-note { font-size: .75rem; color: #A9A293; }

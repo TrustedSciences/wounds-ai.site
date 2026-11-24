@@ -498,9 +498,45 @@ function initFlow(root) {
   var countEls = {};
   root.querySelectorAll('[data-count]').forEach(function (e) { countEls[e.dataset.count] = e; });
   var dayEl = root.querySelector('[data-day]');
+  // Analog clock: one simulated day = 30 seconds; the counters show today's totals and reset at midnight.
+  var DAY_SECONDS = 30, clock = null, curDay = 0;
+  (function buildClock() {
+    var host = root.querySelector('.flow-rate'); if (!host) return;
+    var wrap = document.createElement('div'); wrap.className = 'flow-clock';
+    var NS = svgNS, c = document.createElementNS(NS, 'svg');
+    c.setAttribute('viewBox', '0 0 100 100'); c.setAttribute('aria-hidden', 'true'); c.setAttribute('class', 'clock-face');
+    function mk(tag, at) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); c.appendChild(e); return e; }
+    mk('circle', { cx: 50, cy: 50, r: 46, 'class': 'cf-rim' });
+    for (var i = 0; i < 60; i++) {
+      var a = i * Math.PI / 30, big = i % 5 === 0, r1 = big ? 36 : 40;
+      mk('line', { x1: 50 + r1 * Math.sin(a), y1: 50 - r1 * Math.cos(a), x2: 50 + 43 * Math.sin(a), y2: 50 - 43 * Math.cos(a), 'class': big ? 'cf-tick big' : 'cf-tick' });
+    }
+    var hh = mk('line', { x1: 50, y1: 50, x2: 50, y2: 26, 'class': 'cf-hour' });
+    var mh = mk('line', { x1: 50, y1: 50, x2: 50, y2: 14, 'class': 'cf-min' });
+    mk('circle', { cx: 50, cy: 50, r: 3.2, 'class': 'cf-pin' });
+    var txt = document.createElement('div'); txt.className = 'clock-text';
+    txt.innerHTML = '<span class="clock-day"></span><b class="clock-time"></b><span class="clock-note">Totals reset at midnight</span>';
+    wrap.appendChild(c); wrap.appendChild(txt);
+    host.insertBefore(wrap, host.firstChild);
+    if (dayEl) dayEl.style.display = 'none';
+    clock = { hh: hh, mh: mh, day: txt.querySelector('.clock-day'), time: txt.querySelector('.clock-time'), wrap: wrap };
+  })();
+  function renderClock() {
+    if (!clock) return;
+    var day = Math.floor(S.simSeconds / DAY_SECONDS), hours = (S.simSeconds % DAY_SECONDS) / DAY_SECONDS * 24;
+    clock.hh.setAttribute('transform', 'rotate(' + ((hours % 12) * 30).toFixed(2) + ' 50 50)');
+    clock.mh.setAttribute('transform', 'rotate(' + ((hours % 1) * 360).toFixed(2) + ' 50 50)');
+    var h = Math.floor(hours), m = Math.floor((hours % 1) * 60), h12 = h % 12 === 0 ? 12 : h % 12;
+    clock.day.textContent = 'Simulated day ' + (day + 1);
+    clock.time.textContent = h12 + ':' + (m < 10 ? '0' : '') + m + (h < 12 ? ' AM' : ' PM');
+    clock.wrap.setAttribute('aria-label', 'Simulated day ' + (day + 1) + ', ' + clock.time.textContent);
+  }
   function renderCounts() {
+    var day = Math.floor(S.simSeconds / DAY_SECONDS);
+    if (day !== curDay) { curDay = day; for (var k0 in S.counts) S.counts[k0] = 0; }
     for (var k in countEls) countEls[k].textContent = S.counts[k].toLocaleString('en-US');
-    if (dayEl) dayEl.textContent = 'Simulated day ' + (Math.floor(S.simSeconds / 30) + 1);
+    if (dayEl && !clock) dayEl.textContent = 'Simulated day ' + (day + 1);
+    renderClock();
   }
 
   // ---------------------------------------------------------------- controls
@@ -511,7 +547,7 @@ function initFlow(root) {
   function syncPlay() { playBtn.textContent = S.playing ? 'Pause' : 'Play'; playBtn.setAttribute('aria-pressed', String(!S.playing)); root.classList.toggle('paused', !S.playing); }
   playBtn.addEventListener('click', function () { S.playing = !S.playing; last = 0; syncPlay(); });
   root.querySelector('[data-reset]').addEventListener('click', function () {
-    for (var k in S.counts) S.counts[k] = 0; S.simSeconds = 0;
+    for (var k in S.counts) S.counts[k] = 0; S.simSeconds = 0; curDay = 0;
     particles.forEach(function (p) { p.el.style.display = 'none'; pool.push(p.el); }); particles = [];
     renderCounts();
   });
