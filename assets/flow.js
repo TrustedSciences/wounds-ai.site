@@ -40,6 +40,17 @@ function initFlow(root) {
     cm:    { label: 'Care manager view', sub: 'Photo timeline, trend line', stage: 4, kind: 'out', lane: 'early' },
     exp:   { label: 'Plan systems', sub: 'FHIR R4, JSON, CSV, API', stage: 4, kind: 'out', lane: 'early' },
     aud:   { label: 'Signed record', sub: 'Audit trail on every case', stage: 4, kind: 'out', lane: 'early' },
+    hb:    { label: 'Home-based care', stage: 1, kind: 'src' },
+    pd:    { label: 'After discharge', stage: 1, kind: 'src' },
+    ru:    { label: 'Rural members', stage: 1, kind: 'src' },
+    cap:   { label: 'WoundEye', sub: 'Capture: a guided photo', sub2: 'Metadata stripped', stage: 1, kind: 'prod' },
+    loc:   { label: 'Body map', sub: 'Region, then zone', sub2: 'Same site every visit', stage: 2, kind: 'prod' },
+    asx:   { label: 'Licensed clinician', sub: 'Type, severity, stage', sub2: 'Structured assessment', stage: 3, kind: 'prod' },
+    fup:   { label: 'Follow-up set', sub: 'Next photo, same site', stage: 4, kind: 'out' },
+    gde:   { label: 'Member guidance', sub: 'Plain language, same day', stage: 4, kind: 'out' },
+    cmw:   { label: 'Care manager', sub: 'Whole history, flags', stage: 4, kind: 'out' },
+    pex:   { label: 'Plan systems', sub: 'FHIR R4, JSON, CSV, API', stage: 4, kind: 'out' },
+    srec:  { label: 'Signed record', sub: 'Shows who decided', stage: 4, kind: 'out' },
     ehr2:  { label: 'EHR and other systems', sub: 'Facility EHR and more', stage: 4, kind: 'out' }
   };
 
@@ -63,6 +74,8 @@ function initFlow(root) {
     ['snf', 'wrn'], ['ltach', 'wrn'], ['rehab', 'wrn'], ['cah', 'wrn'], ['wrn', 'mds'],
     ['mds', 'risk'], ['mds', 'qa'], ['mds', 'ehr2'], ['mds', 'trend'],
     ['mhome', 'late1'], ['late1', 'late2'], ['late2', 'late3'],
+    ['hb', 'cap'], ['pd', 'cap'], ['ru', 'cap'], ['cap', 'loc'], ['loc', 'asx'],
+    ['asx', 'fup'], ['asx', 'gde'], ['asx', 'cmw'], ['asx', 'pex'], ['asx', 'srec'],
     ['mhome', 'weh'], ['weh', 'clin'], ['clin', 'ans'], ['clin', 'cm'], ['clin', 'exp'], ['clin', 'aud']
   ];
 
@@ -201,6 +214,36 @@ function initFlow(root) {
   ];
   if (variant === 'ma') STAGES = STAGES_MA;
 
+  // Medicare Advantage "how it works" variant: capture -> locate -> assess -> respond, with follow-up on the same site
+  var LAYOUTS_MA2 = {
+    h: { W: 1200, H: 600, dir: 'h', loopLabel: [600, 34], loopFrom: 'fup', loopTo: 'cap',
+      caps: [[100, 'Where members are'], [340, '1. Capture'], [590, '2. Locate'], [840, '3. Assess'], [1085, '4. Respond']],
+      pos: {
+        hb: [100, 220, 160, 46], pd: [100, 300, 160, 46], ru: [100, 380, 160, 46],
+        cap: [340, 300, 200, 92], loc: [590, 300, 190, 84], asx: [840, 300, 210, 92],
+        fup: [1085, 140, 200, 54], gde: [1085, 225, 200, 54], cmw: [1085, 310, 200, 54], pex: [1085, 395, 200, 54], srec: [1085, 480, 200, 54]
+      } },
+    v: { W: 400, H: 860, dir: 'v', loopLabel: [20, 560], loopFrom: 'fup', loopTo: 'cap',
+      pos: {
+        hb: [110, 46, 170, 40], pd: [292, 46, 170, 40], ru: [200, 100, 170, 40],
+        cap: [200, 215, 230, 84], loc: [200, 350, 230, 78], asx: [200, 485, 230, 84],
+        fup: [110, 630, 176, 54], gde: [292, 630, 176, 54], cmw: [110, 706, 176, 54], pex: [292, 706, 176, 54], srec: [200, 790, 176, 54]
+      } }
+  };
+  var STAGES_MA2 = [
+    { n: 0, title: 'From the kitchen table to a signed record',
+      body: 'A member or family caregiver photographs the wound on any mobile device and taps the spot on a body map. A licensed wound-care clinician assesses it and responds the same day with guidance and a follow-up. Every follow-up photo of the same site joins its timeline, and the care manager sees the whole history.' },
+    { n: 1, num: 1, title: 'Capture',
+      body: 'The member or caregiver takes a guided photo on a mobile device. No clinic visit, no special camera, no kit. Image metadata is stripped and the photo goes to secure storage. It fits home-based care, post-discharge follow-up and rural members with no wound clinic nearby.' },
+    { n: 2, num: 2, title: 'Locate',
+      body: 'Two taps on a clinical body map, region then zone, so the same site is tracked visit after visit. The member also records pain in plain language.' },
+    { n: 3, num: 3, title: 'Assess',
+      body: 'A licensed wound-care clinician reviews the photograph and its location and assesses wound type, severity and stage. When a wound is getting worse, the clinician flags it for the care manager.' },
+    { n: 4, num: 4, title: 'Respond',
+      body: 'The clinician completes the structured assessment, gives the member guidance and sets the follow-up. The record shows who decided. The plan receives it as structured export, through a pull API and signed webhooks, or as a PDF ready for the chart.' }
+  ];
+  if (variant === 'ma2') STAGES = STAGES_MA2;
+
   // ---------------------------------------------------------------- state
   var S = { L: null, mode: variant === 'woundeye' ? 'home' : (variant === 'woundrounds' || variant === 'woundrounds-core') ? 'fac' : variant === 'ma' ? 'compare' : 'both', perDay: (root.querySelector("[data-rate]") ? +root.querySelector("[data-rate]").value : 150), playing: !reduce, stage: 0, focus: null,
             counts: { captured: 0, read: 0, confirmed: 0, flagged: 0, record: 0, results: 0 }, simSeconds: 0 };
@@ -258,7 +301,7 @@ function initFlow(root) {
   // ---------------------------------------------------------------- build
   function build() {
     var wide = root.clientWidth >= 760;
-    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : variant === 'woundrounds-core' ? LAYOUTS_WRN : variant === 'ma' ? LAYOUTS_MA : LAYOUTS)[wide ? 'h' : 'v'];
+    var L = (variant === 'woundeye' ? LAYOUTS_WE : variant === 'woundrounds' ? LAYOUTS_WR : variant === 'woundrounds-core' ? LAYOUTS_WRN : variant === 'ma' ? LAYOUTS_MA : variant === 'ma2' ? LAYOUTS_MA2 : LAYOUTS)[wide ? 'h' : 'v'];
     if (S.L === L && svg) return;
     S.L = L;
     stage.innerHTML = '';
@@ -313,9 +356,9 @@ function initFlow(root) {
     if (L.dir === 'v') ll.setAttribute('transform', 'rotate(-90 ' + L.loopLabel[0] + ' ' + L.loopLabel[1] + ')');
     var core = variant === 'woundrounds-core';
     var loopLines = L.dir === 'h'
-      ? (core ? ['If a wound needs a second look, the nurse can re-assess,', 're-stage or modify the MDS record in WoundRounds.']
+      ? (variant === 'ma2' ? ['Follow-up: the next photo of the same site joins its timeline, visit after visit.'] : core ? ['If a wound needs a second look, the nurse can re-assess,', 're-stage or modify the MDS record in WoundRounds.']
               : ['If the assessing nurse agrees with the AssureStage review,', 'the nurse can re-assess, re-stage or modify the MDS record in WoundRounds.'])
-      : ['Nurse can re-assess, re-stage or modify the MDS'];
+      : [variant === 'ma2' ? 'Follow-up: same site, next photo' : 'Nurse can re-assess, re-stage or modify the MDS'];
     loopLines.forEach(function (line, i) {
       var ts = el('tspan', { x: llx, dy: i ? 19 : 0 }, ll); ts.textContent = line;
     });
@@ -395,9 +438,21 @@ function initFlow(root) {
     wrn: { src: 'assets/img/woundrounds-logo.png', ar: 387 / 52 },
     we:  { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
     weh: { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
+    cap: { src: 'assets/img/woundeye-logo.png', ar: 284 / 46 },
     cwa: { src: 'assets/img/assurestage-logo.png', ar: 1000 / 293, tall: true }
   };
   var NODE_NOTES = {
+    hb: 'Members already receiving care at home, where a wound is usually first noticed by family or a home-health aide.',
+    pd: 'Post-discharge follow-up: 46% of Medicare patients discharged to home health get no home health visit within 14 days.',
+    ru: 'Members in rural counties with no wound clinic nearby.',
+    cap: 'A guided photo on whatever mobile device the member already owns. Image metadata is stripped and the photo goes to secure storage. Photographs never pass through a third-party AI service.',
+    loc: 'Two taps on a clinical body map, region then zone, so the same site is tracked visit after visit.',
+    asx: 'A licensed wound-care clinician reviews the photograph and its location and assesses type, severity and stage. The app itself does not diagnose or treat; every assessment is made by the reviewing clinician.',
+    fup: 'The clinician sets the follow-up. The next photo of the same site joins its timeline, building a measurement trend visit by visit.',
+    gde: 'The member and caregiver get the clinician\u2019s guidance in plain language the same day.',
+    cmw: 'Care managers get the member\u2019s whole wound history in one place. When a wound is getting worse, the reviewing clinician flags it for them.',
+    pex: 'Structured export in FHIR R4, JSON and CSV, a pull API and signed webhooks, and PDF reports ready for the chart. Exports use scoped API keys.',
+    srec: 'Every assessment carries a licensed clinician\u2019s sign-off, and an immutable audit trail records every change.',
     mhome: 'A pressure injury on a heel, or an ulcer on the sole of a diabetic foot, does not announce itself. It starts small, at home, and the people around it are family and home-health aides.',
     late1: 'Between visits, nobody clinical looks at the wound. 46% of Medicare patients discharged to home health get no home health visit within 14 days (JAMA Network Open, 2020).',
     late2: 'By the time the wound reaches a clinic, it is often larger and harder to treat. The expensive part of wound care is almost always the late part.',
@@ -434,13 +489,15 @@ function initFlow(root) {
   function selectSection(k) { S.focus = null; S.section = (S.section === k) ? null : k; applyFocus(); }
   function sectionTitle(k) {
     if (k === 'loop') return 'Follow-up loop';
-    return variant === 'woundrounds-core' ? 'Shared with' : variant === 'ma' ? 'What the plan gets' : 'Act and record';
+    return variant === 'woundrounds-core' ? 'Shared with' : (variant === 'ma' || variant === 'ma2') ? 'What the plan gets' : 'Act and record';
   }
   var SECTION_NOTES = {
-    loop: variant === 'woundrounds-core'
+    loop: variant === 'ma2'
+      ? 'The clinician sets the follow-up. The member photographs the same site again, tagged to the same spot on the body map, so every visit adds to one wound\u2019s photo timeline and measurement trend.'
+      : variant === 'woundrounds-core'
       ? 'If a wound needs a second look, the nurse can re-assess it, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.'
       : 'If the assessing nurse agrees with the AssureStage review, the nurse can re-assess the wound, re-stage it or modify the MDS record in WoundRounds. The new assessment joins the same wound\u2019s timeline, so the team can see whether it is healing, stalled or getting worse.',
-    out: variant === 'ma'
+    out: (variant === 'ma' || variant === 'ma2')
       ? 'Every WoundEye assessment carries a licensed clinician\u2019s sign-off and an audit trail written by the database. The care manager sees the same record as the member, with a photo timeline and a trend line. Structured exports in FHIR R4, JSON and CSV, a pull API with signed webhooks and chart-ready PDF reports connect it to the systems the plan already runs. Pricing is per member per month, scaled to the size of the plan.'
       : variant === 'woundrounds-core'
       ? 'The wound record does not stay in one place. It feeds risk dashboards that show who needs attention first, QA and survey reports for the facility, the EHR and other systems the facility already uses, and the healing trend for each wound.'
@@ -503,6 +560,15 @@ function initFlow(root) {
   }
   function spawn() {
     if (variant === 'ma') { spawnMA(); return; }
+    if (variant === 'ma2') {
+      var fl = Math.random() < 0.12, r2 = [pick(['hb', 'pd', 'pd', 'ru']) + '-cap', 'cap-loc', 'loc-asx'];
+      if (fl) r2.push('asx-cmw'); else { var o = pick(['asx-gde', 'asx-gde', 'asx-fup', 'asx-pex', 'asx-srec', 'asx-cmw']); r2.push(o); if (o === 'asx-fup') r2.push('loop'); }
+      r2 = r2.filter(function (id) { return paths[id]; });
+      var c2 = pool.pop() || el('circle', {}, gParts);
+      c2.setAttribute('r', S.L.dir === 'h' ? 5 : 5.5); c2.style.display = ''; setState(c2, 'raw');
+      particles.push({ el: c2, route: r2, i: 0, d: 0, flag: fl, speed: 150 + Math.random() * 60 });
+      S.counts.captured++; return;
+    }
     var home = S.mode === 'home' || (S.mode === 'both' && Math.random() < 0.28);
     var route = home ? ['home-we', 'we-ai', 'ai-cwa'] : [pick(['snf', 'snf', 'ltach', 'rehab', 'cah']) + '-wr', 'wr-cwa'];
     var flag = Math.random() < 0.12;
@@ -543,6 +609,11 @@ function initFlow(root) {
       if (to === 'late2') { setState(p.el, 'flag'); p.el.setAttribute('r', base + 3.5); }
       if (to === 'late3') { p.el.setAttribute('r', base + 6); if (!p.seed) S.counts.flagged++; }
       if (to === 'clin') { setState(p.el, 'ok'); if (!p.seed) S.counts.confirmed++; }
+      return;
+    }
+    if (variant === 'ma2') {
+      if (to === 'loc') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }
+      if (to === 'asx') { setState(p.el, p.flag ? 'flag' : 'ok'); if (!p.seed) { S.counts.confirmed++; if (p.flag) S.counts.flagged++; } }
       return;
     }
     if (to === 'ai') { setState(p.el, 'read'); if (!p.seed) S.counts.read++; }

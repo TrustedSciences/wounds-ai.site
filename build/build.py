@@ -447,6 +447,43 @@ FLOW_MA = """<div class="flow flow-ma" id="wsa-flow-ma" data-flow data-variant="
   </div>
 </div>"""
 
+FLOW_MA2 = """<div class="flow flow-ma" id="wsa-flow-ma2" data-flow data-variant="ma2">
+  <div class="flow-bar">
+    <div class="flow-steps" role="group" aria-label="Stages">
+      <button type="button" data-stage="0" aria-pressed="true">Whole loop</button>
+      <button type="button" data-stage="1">1. Capture</button>
+      <button type="button" data-stage="2">2. Locate</button>
+      <button type="button" data-stage="3">3. Assess</button>
+      <button type="button" data-stage="4">4. Respond</button>
+    </div>
+  </div>
+  <div class="flow-body">
+    <div class="flow-stage"></div>
+    <div class="flow-side">
+      <div class="flow-panel" aria-live="polite"><h3 class="panel-title"></h3><p class="panel-body"></p></div>
+      <div class="flow-counts">
+        <div><b data-count="captured">0</b>Photos from home</div>
+        <div><b data-count="read">0</b>Sites located on the body map</div>
+        <div><b data-count="confirmed">0</b>Clinician assessments</div>
+        <div class="flag"><b data-count="flagged">0</b>Worsening, flagged to the care manager</div>
+        <div><b data-count="record">0</b>In the plan&rsquo;s record</div>
+      </div>
+      <div class="flow-rate">
+        <div class="row"><label for="flow-rate-ma2">Photos per day</label><b data-rate-out>80</b></div>
+        <input id="flow-rate-ma2" type="range" min="10" max="5000" step="10" value="80" data-rate>
+        <div class="row" style="margin-top:.75rem"><span data-day>Simulated day 1</span><span><button type="button" data-play>Pause</button> <button type="button" data-reset>Reset</button></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><i class="l-raw"></i>Photo sent from home</span>
+    <span><i class="l-read"></i>Located on the body map</span>
+    <span><i class="l-ok"></i>Assessed by a licensed clinician</span>
+    <span><i class="l-flag"></i>Getting worse: flagged to the care manager</span>
+    <span class="flow-foot">Illustrative simulation, not client data. Select a stage or any box to read about it.</span>
+  </div>
+</div>"""
+
 # ---------------------------------------------------------------- pages
 def build():
     os.makedirs(OUT, exist_ok=True)
@@ -1208,13 +1245,23 @@ def build():
 
 <section class="section paper">
   <div class="wrap">
-    <div class="section-head"><h2>How it works</h2><p class="lede">Four steps from the kitchen table to a clinician-signed record.</p></div>
+    <div class="section-head"><h2>How it works</h2><p class="lede">Four steps from the kitchen table to a clinician-signed record. Watch photos move from members&rsquo; homes to the plan&rsquo;s record, and select any step or box to read about it.</p></div>
+  </div>
+  <div class="wrap flow-wide mt-2">
+    {FLOW_MA2}
+  </div>
+  <div class="wrap mt-3">
     <ol class="steps">
-      <li><div><h3>Capture</h3><p>The member or caregiver photographs the wound on a mobile device. Image metadata is stripped and the photo goes to secure storage.</p></div></li>
-      <li><div><h3>Locate</h3><p>Two taps on a clinical body map, region then zone, so the same site is tracked visit after visit.</p></div></li>
-      <li><div><h3>Assess</h3><p>A licensed wound-care clinician reviews the photograph and its location and assesses type, severity and stage.</p></div></li>
-      <li><div><h3>Respond</h3><p>The clinician completes the structured assessment, gives the member guidance and sets follow-up. The record shows who decided.</p></div></li>
+      <li><div><h3>Capture</h3><p>The member or caregiver takes a guided photo on any mobile device they already own. No clinic visit, no special camera, no kit. Image metadata is stripped and the photo goes to secure storage; photographs never pass through a third-party AI service.</p></div></li>
+      <li><div><h3>Locate</h3><p>Two taps on a clinical body map, region then zone, so the same site is tracked visit after visit. The member records pain in plain language.</p></div></li>
+      <li><div><h3>Assess</h3><p>A licensed wound-care clinician reviews the photograph and its location and assesses type, severity and stage. When a wound is getting worse, the clinician flags it for the care manager.</p></div></li>
+      <li><div><h3>Respond</h3><p>The clinician completes the structured assessment, gives the member guidance and sets the follow-up. The record shows who decided, and each follow-up photo adds to the wound&rsquo;s photo timeline and measurement trend.</p></div></li>
     </ol>
+    <div class="ma-plan-grid mt-3">
+      <div><h3>For the member</h3><p>Guidance in plain language the same day, and a follow-up date, without a clinic visit.</p></div>
+      <div><h3>For the care manager</h3><p>The member&rsquo;s whole wound history in one place, with clinician flags when a wound is getting worse. Clinicians see their caseload by organization and facility.</p></div>
+      <div><h3>For the plan&rsquo;s systems</h3><p>Structured export in FHIR R4, JSON and CSV, a pull API and signed webhooks, and PDF reports ready for the chart. PMPM pricing scaled to plan size.</p></div>
+    </div>
   </div>
 </section>
 

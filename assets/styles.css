@@ -562,3 +562,7 @@ main > .hero ~ section:not(.flow-intro) { scroll-margin-top: calc(4.5rem + 1px);
 .flow .pt-wait { fill: #6E5A4F; stroke: #E08A74; stroke-width: 1.4; }
 .flow-legend .l-wait { background: #6E5A4F; box-shadow: 0 0 0 1.5px #E08A74; }
 .flow-ma .flow-counts { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.ma-plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.5rem 2rem; border-top: 1px solid var(--ink); padding-top: 1.25rem; }
+.ma-plan-grid h3 { font-size: 1.15rem; margin: 0 0 .4rem; }
+.ma-plan-grid p { margin: 0; color: var(--ink-2); }
+@media (max-width: 760px) { .ma-plan-grid { grid-template-columns: 1fr; } }
